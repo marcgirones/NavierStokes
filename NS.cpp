@@ -11,11 +11,17 @@ private:
 	double m_Ly {};
 	double m_Lex {};
 	double m_Ley {};
+	double field[10*10];
+	
 
 public:
 	Mesh(int Nx, int Ny, double Lx, double Ly) : m_Nx { Nx }, m_Ny { Ny }, m_Lx { Lx }, m_Ly { Ly }, m_Lex { m_Lx/((double)m_Nx) }, m_Ley { m_Ly/((double)m_Ny) }
 	{
 		std::cout<<"mesh: elements ( "<<m_Nx<<", "<<m_Ny<<" ), dimensions of the element ( "<<m_Lex<<", "<<m_Ley<<" )\n"; 
+		for( int ii=0; ii<m_Nx*m_Ny; ii++){
+			field[ii] = 0;
+		}
+		field[73] = 4;
 	}
 	void goeast (int i, int j, int* ie, int* je)
 	{
@@ -37,6 +43,19 @@ public:
 	double getLey ()
 	{
 		return m_Ley;
+	}
+	void print_field ()
+	{
+		int pos_vec=0; 
+		for(int jj = m_Ny; jj>=0; jj--){
+			for(int ii = 0; ii<m_Nx; ii++){
+				pos_vec = jj*m_Nx + ii;
+				std::cout<<field[pos_vec]<<" ";
+			}
+			//if(!pos_vec%m_Nx-1) std::cout<<"\n";
+			std::cout<<"\n";
+
+		}
 	}
 //		void nodeInfo (int N, int M)
 //	{
@@ -102,6 +121,7 @@ int main ()
 		p.goeast(i, j, &ie, &je);
 		std::cout<<"Current node --> ("<<i<<", "<<j<<") ; east node --> ("<<ie<<", "<<je<<")\n";
 	}
+		p.print_field();
 	return 0;
 }
 
