@@ -1,120 +1,19 @@
 #include <iostream>
 #include <cmath>
+#include "Mesh.h"
+#define Nx 10
+#define Ny 10
+#define Lx 10.0
+#define Ly 10.0
 
 
-class Mesh 
-{
-private:
-	int m_Nx {};
-	int m_Ny {};
-	double m_Lx {};
-	double m_Ly {};
-	double m_Lex {};
-	double m_Ley {};
-	double field[10*10];
-	
-
-public:
-	Mesh(int Nx, int Ny, double Lx, double Ly) : m_Nx { Nx }, m_Ny { Ny }, m_Lx { Lx }, m_Ly { Ly }, m_Lex { m_Lx/((double)m_Nx) }, m_Ley { m_Ly/((double)m_Ny) }
-	{
-		std::cout<<"mesh: elements ( "<<m_Nx<<", "<<m_Ny<<" ), dimensions of the element ( "<<m_Lex<<", "<<m_Ley<<" )\n"; 
-		for( int ii=0; ii<m_Nx*m_Ny; ii++){
-			field[ii] = 0;
-		}
-		field[73] = 4;
-	}
-	void goeast (int i, int j, int* ie, int* je)
-	{
-		*je = j; 
-		*ie = (i+1)%m_Nx;
-	}
-	double findxCenternode (int i)
-	{
-		return m_Lex/2 + m_Lex*i;
-	}
-	double findyCenternode (int j)
-	{
-		return m_Ley/2 + m_Ley*j;
-	}
-	double getLex ()
-	{
-		return m_Lex;
-	}
-	double getLey ()
-	{
-		return m_Ley;
-	}
-	void print_field ()
-	{
-		int pos_vec=0; 
-		for(int jj = m_Ny; jj>=0; jj--){
-			for(int ii = 0; ii<m_Nx; ii++){
-				pos_vec = jj*m_Nx + ii;
-				std::cout<<field[pos_vec]<<" ";
-			}
-			//if(!pos_vec%m_Nx-1) std::cout<<"\n";
-			std::cout<<"\n";
-
-		}
-	}
-//		void nodeInfo (int N, int M)
-//	{
-//		std::cout<<" P("<<N<<","<<M<<") --> ("<<Mesh::findxPnode(N-1)<<", "<<Mesh::findyPnode(M-1)<<")\n U("<<N<<", "<<M<<") --> ("<<Mesh::findxUnode(N-1)<<", "<<Mesh::findyUnode(M-1)<<")\n V("<<N<<", "<<M<<") --> ("<<Mesh::findxVnode(N-1)<<", "<<Mesh::findyVnode(M-1)<<")\n";
-//	}	
-};
-class Pmesh : public Mesh
-{
-public:
-	Pmesh(int Nx, int Ny, double Lx, double Ly) : Mesh(Nx,Ny,Lx,Ly)
-	{
-	}
-	double findxPnode (int i)
-	{
-		return Mesh::findxCenternode(i);
-	}
-	double findyPnode (int j)
-	{
-		return Mesh::findyCenternode(j);
-	}
-};
-class Umesh : public Mesh
-{
-public:
-	Umesh(int Nx, int Ny, double Lx, double Ly) : Mesh(Nx,Ny,Lx,Ly)
-	{
-	}
-	double findxUnode (int i)
-	{
-		return (1+i)*Mesh::getLex();
-	}
-	double findyUnode (int j)
-	{
-		return Mesh::findyCenternode(j);
-	}
-};
-class Vmesh : public Mesh
-{
-public:
-	Vmesh(int Nx, int Ny, double Lx, double Ly) : Mesh(Nx,Ny,Lx,Ly)
-	{
-	}
-	double findxVnode (int i)
-	{
-		return Mesh::findxCenternode(i);
-	}
-	double findyVnode (int j)
-	{
-		return (1+j)*Mesh::getLey();
-	}
-};
 
 int main ()
 {
-	int Nx = 10, Ny = 10; double Lx = 10.0, Ly = 10.0;
 	Pmesh p { Nx, Ny, Lx, Ly};
 	Umesh u { Nx, Ny, Lx, Ly};
 	Vmesh v { Nx, Ny, Lx, Ly};
-	std::cout<<"P(4,3) --> ("<<p.findxPnode(3)<<", "<<p.findyPnode(2)<<")\nU(4,3) --> ("<<u.findxUnode(3)<<", "<<u.findyUnode(2)<<")\nV(4,3) --> ("<<v.findxVnode(3)<<", "<<v.findyVnode(2)<<")\n";
+	//std::cout<<"P(4,3) --> ("<<p.findx(3)<<", "<<p.findy(2)<<")\nU(4,3) --> ("<<u.findx(3)<<", "<<u.findy(2)<<")\nV(4,3) --> ("<<v.findx(3)<<", "<<v.findy(2)<<")\n";
 	int j=0, ie=0, je=0;
 	for (int i=0; i<Nx; i++)
 	{
