@@ -10,6 +10,17 @@ Mesh::Mesh(int Nx, int Ny, double Lx, double Ly)
               << " ), dimensions ( " << m_Lex << ", " << m_Ley << " )\n";
 }
 
+void Mesh::initialize (std::function<double(double,double)> init_cond)
+{
+	for(int ii = 0; ii<m_Nx; ii++){
+		for(int jj = 0; jj<m_Ny; jj++){
+			double x, y;
+			this->coord(ii,jj,&x,&y);
+			m_field[jj*m_Nx+ii] = init_cond(x,y);
+		}
+	}
+}
+
 double Mesh::findxCenternode(int i) const { return m_Lex / 2.0 + m_Lex * i; }
 double Mesh::findyCenternode(int j) const { return m_Ley / 2.0 + m_Ley * j; }
 

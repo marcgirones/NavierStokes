@@ -14,7 +14,43 @@ int main ()
 	Pmesh p { Nx, Ny, Lx, Ly};
 	Umesh u { Nx, Ny, Lx, Ly};
 	Vmesh v { Nx, Ny, Lx, Ly};
-	//std::cout<<"P(4,3) --> ("<<p.findx(3)<<", "<<p.findy(2)<<")\nU(4,3) --> ("<<u.findx(3)<<", "<<u.findy(2)<<")\nV(4,3) --> ("<<v.findx(3)<<", "<<v.findy(2)<<")\n";
+	
+	/************************************
+		PROVES SET FIELD
+	************************************/
+
+	p.initialize([](double x, double y)
+	{
+		return 0;
+	});
+
+	
+	u.initialize([](double x, double y)
+	{
+		double a = cos(2*M_PI*x)*sin(2*M_PI*y);
+		if((a>0 && a>1e-10) || (a<0 && a<-1e-10)) return a;
+		else return 0.0;
+	});
+	v.initialize([](double x, double y)
+	{
+		double a = -sin(2*M_PI*x)*cos(2*M_PI*y);
+		if((a>0 && a>1e-10) || (a<0 && a<-1e-10)) return a;
+		else return 0.0;
+	});
+	
+	std::cout<<"-------- Pressure initial field --------------------------------\n";
+	p.print_field();
+	std::cout<<"-------- Horizontal velocity initial field ----------------------\n";
+	u.print_field();
+	std::cout<<"-------- Vertical velocity initial field ------------------------\n";
+	v.print_field();
+	
+	
+	
+	/*********************************************************
+		PROVES INDEX, OPERATOR I TERMES DIFUSIU / CONVECTIU
+	*********************************************************/
+
 	int j=0, ie=0, je=0;
 	double x=0, y =0, p_actual=0, p_east=0;
 	double convU=0, convV=0, difU=0, difV=0, nu =1.51e-5;
