@@ -2,10 +2,10 @@
 #include <cmath>
 #include "Mesh.h"
 #include "NavierStokesTerms.h"
-#define Nx 10
-#define Ny 10
-#define Lx 10.0
-#define Ly 10.0
+#define Nx 4
+#define Ny 4
+#define Lx 1.0
+#define Ly 1.0
 
 
 
