@@ -4,13 +4,18 @@
 
 Mesh::Mesh(int Nx, int Ny, double Lx, double Ly) : m_Nx { Nx }, m_Ny { Ny }, m_Lx { Lx }, m_Ly { Ly }, m_Lex { m_Lx/((double)m_Nx) }, m_Ley { m_Ly/((double)m_Ny) }, field(Nx*Ny)
 {
-	
-	std::cout<<"mesh: elements ( "<<m_Nx<<", "<<m_Ny<<" ), dimensions of the element ( "<<m_Lex<<", "<<m_Ley<<" )\n"; 
-	for( int ii=0; ii<field.size(); ii++){
-		field[ii] = 0;
-	}
-	field[73] = 4;
 }
+void Mesh::initialize (std::function<double(double,double)> init_cond)
+{
+	for(int ii = 0; ii<m_Nx; ii++){
+		for(int jj = 0; jj<m_Ny; jj++){
+			double x, y;
+			this->coord(ii,jj,&x,&y);
+			field[jj*m_Nx+ii] = init_cond(x,y);
+		}
+	}
+}
+
 void Mesh::goeast (int i, int j, int* ie, int* je)
 {
 	*je = j; 
@@ -41,7 +46,7 @@ void Mesh::print_field ()
 	for(int jj = m_Ny-1; jj>=0; jj--){
 		for(int ii = 0; ii<m_Nx; ii++){
 			pos_vec = jj*m_Nx + ii;
-			std::cout<<field[pos_vec]<<" ";
+			std::cout<<field[pos_vec]<<"		";
 		}
 		//if(!pos_vec%m_Nx-1) std::cout<<"\n";
 		std::cout<<"\n";

@@ -2,6 +2,7 @@
 #define MESH_H
 
 #include <vector>
+#include <functional>
 
 class Mesh 
 {
@@ -17,6 +18,7 @@ private:
 
 public:
 	Mesh(int Nx, int Ny, double Lx, double Ly);
+	void initialize(std::function<double(double,double)> init_cond);
 	void goeast (int i, int j, int* ie, int* je);
 	double findxCenternode (int i);
 	double findyCenternode (int j);
@@ -25,6 +27,8 @@ public:
 	virtual void coord (int i, int j, double* x, double* y) = 0;
 	double getLex ();
 	double getLey ();
+	double getFieldValue(int i);
+	double getFieldValue(int i, int j);
 	void print_field ();
 };
 class Pmesh : public Mesh
