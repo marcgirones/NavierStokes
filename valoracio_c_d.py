@@ -34,8 +34,8 @@ x, y = sp.symbols("x y")
 ua = sp.cos(2 * sp.pi * x) * sp.sin(2 * sp.pi * y)
 va = -sp.sin(2 * sp.pi * x) * sp.cos(2 * sp.pi * y)
 
-conv_x = sp.diff(ua, x) * ua + sp.diff(ua, y) * va
-conv_y = sp.diff(va, x) * ua + sp.diff(va, y) * va
+conv_x = sp.diff(ua*ua, x) + sp.diff(ua*va, y)
+conv_y = sp.diff(va*ua, x) + sp.diff(va*va, y)
 dif_x = NU * (sp.diff(ua, x, 2) + sp.diff(ua, y, 2))
 dif_y = NU * (sp.diff(va, x, 2) + sp.diff(va, y, 2))
 
@@ -81,9 +81,9 @@ def errors_for(n: int, data: np.ndarray) -> list:
     xv, yv = (i + 0.5) * h, (j + 1.0) * h
 
     return [
-        np.abs(conv_u - f_convU(xu, yu)).max(),
+        np.abs(conv_u - f_convU(xu, yu)).max() * 2,
         np.abs(conv_v - f_convV(xv, yv)).max(),
-        np.abs(dif_u - f_difU(xu, yu)).max(),
+        np.abs(dif_u - f_difU(xu, yu)).max()*2,
         np.abs(dif_v - f_difV(xv, yv)).max(),
     ]
 
