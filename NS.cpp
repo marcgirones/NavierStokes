@@ -1,9 +1,10 @@
 #include <iostream>
 #include <cmath>
+#include <fstream>
 #include "Mesh.h"
 #include "NavierStokesTerms.h"
-#define Nx 4
-#define Ny 4
+#define Nx 100
+#define Ny 100
 #define Lx 1.0
 #define Ly 1.0
 
@@ -38,12 +39,12 @@ int main ()
 		else return 0.0;
 	});
 	
-	std::cout<<"-------- Pressure initial field --------------------------------\n";
+	/*td::cout<<"-------- Pressure initial field --------------------------------\n";
 	p.print_field();
 	std::cout<<"-------- Horizontal velocity initial field ----------------------\n";
 	u.print_field();
 	std::cout<<"-------- Vertical velocity initial field ------------------------\n";
-	v.print_field();
+	v.print_field();*/
 	
 	
 	
@@ -51,7 +52,7 @@ int main ()
 		PROVES INDEX, OPERATOR I TERMES DIFUSIU / CONVECTIU
 	*********************************************************/
 
-	int j=0, ie=0, je=0;
+	/*int j=0, ie=0, je=0;
 	double x=0, y =0, p_actual=0, p_east=0;
 	double convU=0, convV=0, difU=0, difV=0, nu =1.51e-5;
 	for (int i=0; i<Nx; i++)
@@ -90,7 +91,40 @@ int main ()
 		//std::cout<<"Current node --> ("<<i<<", "<<j<<") ; coordinates --> ("<<x<<", "<<y<<")\n";
 		std::cout<<"Current node value --> ("<<p_actual<<") ; East node value --> ("<<p_east<<")\n";
 	}
-		p.print_field();
+		p.print_field();*/
+
+
+	/*******************************************************
+		CONVECTIVE AND DIFUSIVE TERM COMPUTATION
+	********************************************************/
+	double convU=0, convV=0, difU=0, difV=0, nu =1.51e-5;
+
+	// Open CSV file for writing
+	std::ofstream file("datos.csv");
+
+	// Write header row
+	file << "convU,convV,difU,difV\n";
+
+	for (int i=0; i<Nx; i++)
+	{
+		for (int j=0; j<Ny; j++)
+		{
+			// Compute convective and diffusive terms
+			convU = FVM::computeConvectiveU(i, j, u, v);
+			difU = FVM::computeDiffusiveU(i, j, u, nu);
+
+			convV = FVM::computeConvectiveV(i, j, u, v);
+			difV = FVM::computeDiffusiveV(i, j, u, v, nu);
+
+			// Write row values separated by commas
+			file << convU << "," << convV << "," << difU << "," << difV << "\n";
+
+		}
+	}
+
+	// Close the file stream
+	file.close();
+
 	return 0;
 }
 

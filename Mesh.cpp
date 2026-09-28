@@ -6,8 +6,8 @@ Mesh::Mesh(int Nx, int Ny, double Lx, double Ly)
       m_Ley{m_Ly / static_cast<double>(m_Ny)}, 
       m_field(Nx * Ny, 0.0) 
 {
-    std::cout << "mesh: elements ( " << m_Nx << ", " << m_Ny 
-              << " ), dimensions ( " << m_Lex << ", " << m_Ley << " )\n";
+    /*std::cout << "mesh: elements ( " << m_Nx << ", " << m_Ny 
+              << " ), dimensions ( " << m_Lex << ", " << m_Ley << " )\n";*/
 }
 
 void Mesh::initialize (std::function<double(double,double)> init_cond)
