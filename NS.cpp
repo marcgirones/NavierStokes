@@ -1,17 +1,21 @@
 #include <iostream>
 #include <cmath>
 #include <fstream>
+#include <cstdlib>     // atoi
+#include <iomanip>     // setprecision
+#include <string>      // to_string
 #include "Mesh.h"
 #include "NavierStokesTerms.h"
-#define Nx 100
-#define Ny 100
 #define Lx 1.0
 #define Ly 1.0
 
 
 
-int main ()
+int main (int argc, char** argv)
 {
+	const int Nx = (argc>1) ? std::atoi(argv[1]) : 100; //default value N = 100
+	const int Ny = Nx;
+
 	Pmesh p { Nx, Ny, Lx, Ly};
 	Umesh u { Nx, Ny, Lx, Ly};
 	Vmesh v { Nx, Ny, Lx, Ly};
@@ -29,14 +33,16 @@ int main ()
 	u.initialize([](double x, double y)
 	{
 		double a = cos(2*M_PI*x)*sin(2*M_PI*y);
-		if((a>0 && a>1e-10) || (a<0 && a<-1e-10)) return a;
-		else return 0.0;
+		return a;
+		//if((a>0 && a>1e-10) || (a<0 && a<-1e-10)) return a;
+		//else return 0.0;
 	});
 	v.initialize([](double x, double y)
 	{
 		double a = -sin(2*M_PI*x)*cos(2*M_PI*y);
-		if((a>0 && a>1e-10) || (a<0 && a<-1e-10)) return a;
-		else return 0.0;
+		return a;
+		//if((a>0 && a>1e-10) || (a<0 && a<-1e-10)) return a;
+		//else return 0.0;
 	});
 	
 	/*td::cout<<"-------- Pressure initial field --------------------------------\n";
@@ -100,7 +106,8 @@ int main ()
 	double convU=0, convV=0, difU=0, difV=0, nu =1.51e-5;
 
 	// Open CSV file for writing
-	std::ofstream file("datos.csv");
+	std::ofstream file("datos" + std::to_string(Nx) + ".csv");
+	file << std::setprecision(17);
 
 	// Write header row
 	file << "convU,convV,difU,difV\n";
