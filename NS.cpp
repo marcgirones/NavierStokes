@@ -51,7 +51,7 @@ int main (int argc, char** argv)
 	u.print_field();
 	std::cout<<"-------- Vertical velocity initial field ------------------------\n";
 	v.print_field();*/
-	
+	/**/	
 	
 	
 	/*********************************************************
