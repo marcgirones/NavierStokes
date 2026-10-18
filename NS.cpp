@@ -6,6 +6,7 @@
 #include <string>      // to_string
 #include "Mesh.h"
 #include "NavierStokesTerms.h"
+#include "Solver.h"
 #define Lx 1.0
 #define Ly 1.0
 
@@ -129,8 +130,42 @@ int main (int argc, char** argv)
 		}
 	}
 
-	// Close the file stream
+	// Close the Part A verification file. The original verification loop above
+	// is intentionally preserved unchanged.
 	file.close();
+
+	/*******************************************************
+		PART B/C: PRESSURE-VELOCITY COUPLING AND TIME LOOP
+	*******************************************************/
+	const double rho = 1.0;       // Set to the density required by the assignment
+	const double dt = 1.0e-4;     // Example time step; check stability/convergence
+	const int nSteps = 100;       // Number of time steps to compute
+
+	Solver solver(Nx, Ny, Lx, Ly, nu, rho, dt);
+	for (int n = 0; n < nSteps; ++n) {
+		solver.step(u, v, p);
+		if ((n + 1) % 10 == 0) {
+			std::cout << "Completed step " << solver.getStep()
+			          << ", t = " << solver.getTime() << "\n";
+		}
+	}
+
+	// Optional final fields for inspection.
+	std::ofstream pressureFile("pressure_final.csv");
+	std::ofstream uFile("u_final.csv");
+	std::ofstream vFile("v_final.csv");
+	pressureFile << std::setprecision(17);
+	uFile << std::setprecision(17);
+	vFile << std::setprecision(17);
+	for (int j = 0; j < Ny; ++j) {
+		for (int i = 0; i < Nx; ++i) {
+			if (i) { pressureFile << ","; uFile << ","; vFile << ","; }
+			pressureFile << p(i,j);
+			uFile << u(i,j);
+			vFile << v(i,j);
+		}
+		pressureFile << "\n"; uFile << "\n"; vFile << "\n";
+	}
 
 	return 0;
 }

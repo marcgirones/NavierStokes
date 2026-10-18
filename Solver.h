@@ -1,0 +1,47 @@
+#ifndef SOLVER_H
+#define SOLVER_H
+
+#include "Mesh.h"
+#include <vector>
+
+// Time integrator and pressure-velocity coupling for  periodic 2-D case.
+// The convective/diffusive discretizations remain in namespace FVM.
+class Solver {
+public:
+    Solver(int Nx, int Ny, double Lx, double Ly,
+           double nu, double rho, double dt);
+    ~Solver();
+
+    Solver(const Solver&) = delete;
+    Solver& operator=(const Solver&) = delete;
+
+    // One complete time step: AB2 predictor -> Poisson solve -> correction.
+    void step(Umesh& u, Vmesh& v, Pmesh& p);
+
+    int getStep() const { return m_step; }
+    double getTime() const { return m_step * m_dt; }
+
+private:
+    int m_Nx, m_Ny;
+    double m_Lx, m_Ly, m_dx, m_dy;
+    double m_nu, m_rho, m_dt;
+    int m_step = 0;
+
+    // Previous R^n fields, flattened as j*Nx+i. R^{-1}=0 initially.
+    std::vector<double> m_RuPrevious, m_RvPrevious;
+
+    // Predictor velocities and pseudopressure are stored separately so that
+    // updating one cell never changes data needed by another cell.
+    std::vector<double> m_up, m_vp, m_pseudoPressure;
+
+    // FFTW resources are hidden from the header using void pointers.
+    void* m_rhs = nullptr; //b
+    void* m_rhsHat = nullptr; // b fourier space
+    void* m_forwardPlan = nullptr; // direct base transformation
+    void* m_inversePlan = nullptr; // inverse base transformation
+
+    std::size_t index(int i, int j) const;
+    void solvePoissonFFT();
+};
+
+#endif

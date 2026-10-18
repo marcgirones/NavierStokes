@@ -1,0 +1,142 @@
+#include "Solver.h"
+#include "NavierStokesTerms.h"
+
+#include <fftw3.h>
+#include <cmath>
+#include <stdexcept>
+#include <algorithm>
+
+Solver::Solver(int Nx, int Ny, double Lx, double Ly,
+               double nu, double rho, double dt)
+    : m_Nx(Nx), m_Ny(Ny), m_Lx(Lx), m_Ly(Ly),
+      m_dx(Lx / Nx), m_dy(Ly / Ny), m_nu(nu), m_rho(rho), m_dt(dt),
+      m_RuPrevious(static_cast<std::size_t>(Nx) * Ny, 0.0),
+      m_RvPrevious(static_cast<std::size_t>(Nx) * Ny, 0.0),
+      m_up(static_cast<std::size_t>(Nx) * Ny, 0.0),
+      m_vp(static_cast<std::size_t>(Nx) * Ny, 0.0),
+      m_pseudoPressure(static_cast<std::size_t>(Nx) * Ny, 0.0)
+{
+    if (Nx < 2 || Ny < 2 || Lx <= 0.0 || Ly <= 0.0 || rho <= 0.0 || dt <= 0.0)
+        throw std::invalid_argument("Invalid Solver dimensions or physical parameters");
+
+    const std::size_t n = static_cast<std::size_t>(Nx) * Ny;
+    auto* rhs = static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * n));
+    auto* rhsHat = static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * n));
+    if (!rhs || !rhsHat) {
+        if (rhs) fftw_free(rhs);
+        if (rhsHat) fftw_free(rhsHat);
+        throw std::bad_alloc();
+    }
+    m_rhs = rhs;
+    m_rhsHat = rhsHat;
+    m_forwardPlan = fftw_plan_dft_2d(m_Ny, m_Nx, rhs, rhsHat,
+                                      FFTW_FORWARD, FFTW_ESTIMATE);
+    m_inversePlan = fftw_plan_dft_2d(m_Ny, m_Nx, rhsHat, rhs,
+                                      FFTW_BACKWARD, FFTW_ESTIMATE);
+    if (!m_forwardPlan || !m_inversePlan)
+        throw std::runtime_error("FFTW could not create the 2-D transform plans");
+}
+
+Solver::~Solver()
+{
+    if (m_forwardPlan) fftw_destroy_plan(static_cast<fftw_plan>(m_forwardPlan));
+    if (m_inversePlan) fftw_destroy_plan(static_cast<fftw_plan>(m_inversePlan));
+    if (m_rhs) fftw_free(m_rhs);
+    if (m_rhsHat) fftw_free(m_rhsHat);
+}
+
+std::size_t Solver::index(int i, int j) const
+{
+    return static_cast<std::size_t>(j) * m_Nx + i;
+}
+
+void Solver::solvePoissonFFT()
+{
+    auto* rhs = static_cast<fftw_complex*>(m_rhs);
+    auto* rhsHat = static_cast<fftw_complex*>(m_rhsHat);
+
+    // Discrete divergence at pressure-cell centres. The mesh is periodic.
+    for (int j = 0; j < m_Ny; ++j) {
+        for (int i = 0; i < m_Nx; ++i) {
+            const double div = (m_up[index(i, j)] - m_up[index(i - 1 < 0 ? m_Nx - 1 : i - 1, j)]) / m_dx
+                             + (m_vp[index(i, j)] - m_vp[index(i, j - 1 < 0 ? m_Ny - 1 : j - 1)]) / m_dy;
+            rhs[index(i, j)][0] = div;
+            rhs[index(i, j)][1] = 0.0;
+        }
+    }
+
+    fftw_execute(static_cast<fftw_plan>(m_forwardPlan));
+
+    // Invert the eigenvalues of the same second-order discrete Laplacian.
+    // The (kx,ky)=(0,0) mode is singular: set mean pseudopressure to zero.
+    for (int ky = 0; ky < m_Ny; ++ky) {
+        const double sy = std::sin(M_PI * ky / m_Ny);
+        for (int kx = 0; kx < m_Nx; ++kx) {
+            const std::size_t k = index(kx, ky);
+            if (kx == 0 && ky == 0) {
+                rhsHat[k][0] = 0.0;
+                rhsHat[k][1] = 0.0;
+                continue;
+            }
+            const double sx = std::sin(M_PI * kx / m_Nx);
+            const double lambda = -4.0 * sx * sx / (m_dx * m_dx)
+                                  -4.0 * sy * sy / (m_dy * m_dy);
+            rhsHat[k][0] /= lambda;
+            rhsHat[k][1] /= lambda;
+        }
+    }
+
+    fftw_execute(static_cast<fftw_plan>(m_inversePlan));
+    const double normalization = 1.0 / (static_cast<double>(m_Nx) * m_Ny);
+    for (int j = 0; j < m_Ny; ++j)
+        for (int i = 0; i < m_Nx; ++i)
+            m_pseudoPressure[index(i, j)] = rhs[index(i, j)][0] * normalization;
+
+}
+
+void Solver::step(Umesh& u, Vmesh& v, Pmesh& p)
+{
+    const double cellVolume = m_dx * m_dy;
+    std::vector<double> Ru(m_RuPrevious.size());
+    std::vector<double> Rv(m_RvPrevious.size());
+
+    // LOOP 1: convective/diffusive terms and AB2 predictor.
+    // FVM functions are unchanged from the Part A verification.
+    for (int i = 0; i < m_Nx; ++i) {
+        for (int j = 0; j < m_Ny; ++j) {
+            const std::size_t k = index(i, j);
+            const double convU = FVM::computeConvectiveU(i, j, u, v);
+            const double difU  = FVM::computeDiffusiveU(i, j, u, m_nu);
+            const double convV = FVM::computeConvectiveV(i, j, u, v);
+            const double difV  = FVM::computeDiffusiveV(i, j, u, v, m_nu);
+
+            // Momentum equation: du/dt = -C/V + D/V - (1/rho) grad(p).
+            Ru[k] = (-convU + difU) / cellVolume;
+            Rv[k] = (-convV + difV) / cellVolume;
+
+            m_up[k] = u(i, j) + m_dt * (1.5 * Ru[k] - 0.5 * m_RuPrevious[k]);
+            m_vp[k] = v(i, j) + m_dt * (1.5 * Rv[k] - 0.5 * m_RvPrevious[k]);
+        }
+    }
+
+    // Solve Laplacian(pseudoPressure) = div(predictor velocity).
+    solvePoissonFFT();
+
+    // LOOP 2: correct velocities and recover physical pressure p = rho/dt * p_tilde.
+    // u(i,j) lies between pressure cells i and i+1; v(i,j) between j and j+1.
+    for (int i = 0; i < m_Nx; ++i) {
+        for (int j = 0; j < m_Ny; ++j) {
+            const std::size_t k = index(i, j);
+            const int ip = (i + 1) % m_Nx;
+            const int jp = (j + 1) % m_Ny;
+            u(i, j) = m_up[k] - (m_pseudoPressure[index(ip, j)] - m_pseudoPressure[k]) / m_dx;
+            v(i, j) = m_vp[k] - (m_pseudoPressure[index(i, jp)] - m_pseudoPressure[k]) / m_dy;
+            p(i, j) = (m_rho / m_dt) * m_pseudoPressure[k];
+        }
+    }
+
+    // Keep R^n for the next AB2 step. Initial previous R is zero (R^{-1}=0).
+    m_RuPrevious.swap(Ru);
+    m_RvPrevious.swap(Rv);
+    ++m_step;
+}
