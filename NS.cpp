@@ -64,63 +64,10 @@ int main (int argc, char** argv)
 		//else return 0.0;
 	});
 
-	/*td::cout<<"-------- Pressure initial field --------------------------------\n";
-	p.print_field();
-	std::cout<<"-------- Horizontal velocity initial field ----------------------\n";
-	u.print_field();
-	std::cout<<"-------- Vertical velocity initial field ------------------------\n";
-	v.print_field();*/
-	/**/	
-
-
-	/*********************************************************
-		PROVES INDEX, OPERATOR I TERMES DIFUSIU / CONVECTIU
-	*********************************************************/
-
-	/*int j=0, ie=0, je=0;
-	double x=0, y =0, p_actual=0, p_east=0;
-	double convU=0, convV=0, difU=0, difV=0, nu =1.51e-5;
-	for (int i=0; i<Nx; i++)
-	{
-		//calcul de indexs tenint en compte halo, podem utilitzar el operator com veiem a baix
-		ie = p.wrapX(i+1);
-		je = p.wrapX(j);
-
-
-
-		//pots asignar valors a un node [funcio operator]
-		p(i+1,j) = 2*i;
-		u(i+1,j) = 3*i;
-
-		//ja no fa falta treballar amb index ie iw is.... simplement pots evaluar p(i+1,j)  [funcio operator]
-		p_actual = p(i, j);
-		p_east = p(i+1, j);
-
-		//calcul termes convectius i difusius
-
-		convU = FVM::computeConvectiveU(i, j, u, v);
-		difU = FVM::computeDiffusiveU(i, j, u, nu);
-
-		convV = FVM::computeConvectiveV(i, j, u, v);
-		difV = FVM::computeDiffusiveV(i, j, u, v, nu);
-
-		std::cout << "Convección U (" << i << ", " << j << "): " << convU << "\n";
-		std::cout << "Difusión U   (" << i << ", " << j << "): " << difU << "\n";
-		std::cout << "Convección V (" << i << ", " << j << "): " << convV << "\n";
-		std::cout << "Difusión V   (" << i << ", " << j << "): " << difV << "\n";
-
-
-
-		p.coord(i, j, &x, &y);
-		std::cout<<"Current node --> ("<<i<<", "<<j<<") ; east node --> ("<<ie<<", "<<je<<")\n";
-		//std::cout<<"Current node --> ("<<i<<", "<<j<<") ; coordinates --> ("<<x<<", "<<y<<")\n";
-		std::cout<<"Current node value --> ("<<p_actual<<") ; East node value --> ("<<p_east<<")\n";
-	}
-		p.print_field();*/
 
 
 	/*******************************************************
-		CONVECTIVE AND DIFUSIVE TERM COMPUTATION
+		PART A CONVECTIVE AND DIFUSIVE TERM COMPUTATION
 	********************************************************/
 	double convU=0, convV=0, difU=0, difV=0;
 
@@ -217,33 +164,6 @@ int main (int argc, char** argv)
 	pressureNFile.close();
 	uNFile.close();
 	vNFile.close();
-
-	// Spatial grid spacing
-	const double dx = Lx / Nx;
-	const double dy = Ly / Ny;
-
-	// Verify incompressibility after the simulation
-	double maxDiv = 0.0;
-	double sumDiv2 = 0.0;
-
-	for (int j = 0; j < Ny; ++j) {
-		for (int i = 0; i < Nx; ++i) {
-
-			const double div =
-				(u(i, j) - u(i - 1, j)) / dx
-			+ (v(i, j) - v(i, j - 1)) / dy;
-
-			maxDiv = std::max(maxDiv, std::abs(div));
-			sumDiv2 += div * div;
-		}
-	}
-
-	const double rmsDiv =
-		std::sqrt(sumDiv2 / (static_cast<double>(Nx) * Ny));
-
-	std::cout << "\nIncompressibility verification:\n";
-	std::cout << "Maximum divergence = " << maxDiv << '\n';
-	std::cout << "RMS divergence     = " << rmsDiv << '\n';
 
 	return 0;
 }
