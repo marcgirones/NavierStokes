@@ -150,7 +150,7 @@ int main (int argc, char** argv)
 		}
 	}
 
-	// Optional final fields for inspection.
+	// Final fields for inspection / verification.
 	std::ofstream pressureFile("pressure_final.csv");
 	std::ofstream uFile("u_final.csv");
 	std::ofstream vFile("v_final.csv");
@@ -166,6 +166,33 @@ int main (int argc, char** argv)
 		}
 		pressureFile << "\n"; uFile << "\n"; vFile << "\n";
 	}
+
+	// Spatial grid spacing
+	const double dx = Lx / Nx;
+	const double dy = Ly / Ny;
+
+	// Verify incompressibility after the simulation
+	double maxDiv = 0.0;
+	double sumDiv2 = 0.0;
+
+	for (int j = 0; j < Ny; ++j) {
+		for (int i = 0; i < Nx; ++i) {
+
+			const double div =
+				(u(i, j) - u(i - 1, j)) / dx
+			+ (v(i, j) - v(i, j - 1)) / dy;
+
+			maxDiv = std::max(maxDiv, std::abs(div));
+			sumDiv2 += div * div;
+		}
+	}
+
+	const double rmsDiv =
+		std::sqrt(sumDiv2 / (static_cast<double>(Nx) * Ny));
+
+	std::cout << "\nIncompressibility verification:\n";
+	std::cout << "Maximum divergence = " << maxDiv << '\n';
+	std::cout << "RMS divergence     = " << rmsDiv << '\n';
 
 	return 0;
 }
