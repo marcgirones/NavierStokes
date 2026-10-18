@@ -4,7 +4,7 @@
 #include "Mesh.h"
 #include <vector>
 
-// Time integrator and pressure-velocity coupling for  periodic 2-D case.
+// Time integrator and pressure-velocity coupling for the periodic 2-D case.
 // The convective/diffusive discretizations remain in namespace FVM.
 class Solver {
 public:
@@ -35,13 +35,13 @@ private:
     std::vector<double> m_up, m_vp, m_pseudoPressure;
 
     // FFTW resources are hidden from the header using void pointers.
-    void* m_rhs = nullptr; //b
-    void* m_rhsHat = nullptr; // b fourier space
-    void* m_forwardPlan = nullptr; // direct base transformation
-    void* m_inversePlan = nullptr; // inverse base transformation
+    void* m_rhs = nullptr;
+    void* m_rhsHat = nullptr;
+    void* m_forwardPlan = nullptr;
+    void* m_inversePlan = nullptr;
 
     std::size_t index(int i, int j) const;
-    void solvePoissonFFT();
+    void solvePoissonFFT(const Umesh& u, const Vmesh& v);
 };
 
 #endif

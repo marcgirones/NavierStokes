@@ -50,7 +50,7 @@ std::size_t Solver::index(int i, int j) const
     return static_cast<std::size_t>(j) * m_Nx + i;
 }
 
-void Solver::solvePoissonFFT()
+void Solver::solvePoissonFFT(const Umesh& u, const Vmesh& v)
 {
     auto* rhs = static_cast<fftw_complex*>(m_rhs);
     auto* rhsHat = static_cast<fftw_complex*>(m_rhsHat);
@@ -92,6 +92,8 @@ void Solver::solvePoissonFFT()
         for (int i = 0; i < m_Nx; ++i)
             m_pseudoPressure[index(i, j)] = rhs[index(i, j)][0] * normalization;
 
+    (void)u;
+    (void)v;
 }
 
 void Solver::step(Umesh& u, Vmesh& v, Pmesh& p)
@@ -114,13 +116,20 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p)
             Ru[k] = (-convU + difU) / cellVolume;
             Rv[k] = (-convV + difV) / cellVolume;
 
-            m_up[k] = u(i, j) + m_dt * (1.5 * Ru[k] - 0.5 * m_RuPrevious[k]);
-            m_vp[k] = v(i, j) + m_dt * (1.5 * Rv[k] - 0.5 * m_RvPrevious[k]);
+            // Start AB2 with one forward-Euler step; using R^{-1}=0 in AB2
+            // would incorrectly multiply the first increment by 3/2.
+            if (m_step == 0) {
+                m_up[k] = u(i, j) + m_dt * Ru[k];
+                m_vp[k] = v(i, j) + m_dt * Rv[k];
+            } else {
+                m_up[k] = u(i, j) + m_dt * (1.5 * Ru[k] - 0.5 * m_RuPrevious[k]);
+                m_vp[k] = v(i, j) + m_dt * (1.5 * Rv[k] - 0.5 * m_RvPrevious[k]);
+            }
         }
     }
 
     // Solve Laplacian(pseudoPressure) = div(predictor velocity).
-    solvePoissonFFT();
+    solvePoissonFFT(u, v);
 
     // LOOP 2: correct velocities and recover physical pressure p = rho/dt * p_tilde.
     // u(i,j) lies between pressure cells i and i+1; v(i,j) between j and j+1.
