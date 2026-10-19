@@ -100,14 +100,14 @@ int main (int argc, char** argv)
 		PART B/C: PRESSURE-VELOCITY COUPLING AND TIME LOOP
 	*******************************************************/
 	Solver solver(Nx, Ny, Lx, Ly, nu, rho);
-	double dt = solver.getdt();
-	for (double time = 0; time < tFinal; time += dt) {
-		solver.step(u, v, p);
-		std::cout << "Completed step " << solver.getStep()
-					  << ", dt = " << dt
-			          << ", t = " << solver.getTime() << "\n";
+	while (solver.getTime() < tFinal) {
+		
+		const double dtMax = tFinal - solver.getTime();
+		solver.step(u, v, p, dtMax);
 
-		dt = solver.getdt();
+		std::cout << "Completed step " << solver.getStep()
+				<< ", dt = " << solver.getdt()
+				<< ", t = " << solver.getTime() << "\n";
 	}
 
 	// Final fields for inspection / verification.

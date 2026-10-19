@@ -1,3 +1,4 @@
+
 #include "Solver.h"
 #include "NavierStokesTerms.h"
 
@@ -11,7 +12,7 @@ Solver::Solver(int Nx, int Ny, double Lx, double Ly,
                double nu, double rho)
     : m_Nx(Nx), m_Ny(Ny), m_Lx(Lx), m_Ly(Ly),
       m_dx(Lx / Nx), m_dy(Ly / Ny), m_nu(nu), m_rho(rho),
-      m_dtd(0.5*((Lx/Nx)*(Lx/Nx))/nu),m_dtc(m_dtd),m_dt(m_dtc),
+      m_dtd(0.5*((Lx/Nx)*(Lx/Nx))/nu), m_dtc(m_dtd), m_dt(m_dtc),
       m_RuPrevious(static_cast<std::size_t>(Nx) * Ny, 0.0),
       m_RvPrevious(static_cast<std::size_t>(Nx) * Ny, 0.0),
       m_up(static_cast<std::size_t>(Nx) * Ny, 0.0),
@@ -98,12 +99,25 @@ void Solver::solvePoissonFFT(const Umesh& u, const Vmesh& v)
     (void)v;
 }
 
-void Solver::step(Umesh& u, Vmesh& v, Pmesh& p)
+void Solver::step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax)
 {
     const double cellVolume = m_dx * m_dy;
     std::vector<double> Ru(m_RuPrevious.size());
     std::vector<double> Rv(m_RvPrevious.size());
-    double u_max = u.max_val(), v_max = v.max_val();
+
+    // Determine the timestep once, before computing the predictor.
+    const double u_max = u.max_val();
+    const double v_max = v.max_val();
+    const double velocity_max = std::max(u_max, v_max);
+
+    m_dtc = (velocity_max > 0.0)
+          ? m_dx / velocity_max
+          : m_dtd;
+
+    m_dt = 0.1 * std::min(m_dtd, m_dtc);
+
+    // Do not advance beyond the requested final time.
+    m_dt = std::min(m_dt, dtMax);
 
     // LOOP 1: convective/diffusive terms and AB2 predictor.
     // FVM functions are unchanged from the Part A verification.
@@ -114,11 +128,6 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p)
             const double difU  = FVM::computeDiffusiveU(i, j, u, m_nu);
             const double convV = FVM::computeConvectiveV(i, j, u, v);
             const double difV  = FVM::computeDiffusiveV(i, j, u, v, m_nu);
-
-            //dt determination
-
-            u_max > v_max ? m_dtc = (m_Lx/m_Nx)/u_max : m_dtc = (m_Lx/m_Nx)/v_max;
-            m_dtc > m_dtd ? m_dt = 0.1 * m_dtd : m_dt = 0.1 * m_dtc;
 
             // Momentum equation: du/dt = -C/V + D/V - (1/rho) grad(p).
             Ru[k] = (-convU + difU) / cellVolume;
@@ -149,10 +158,6 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p)
             u(i, j) = m_up[k] - (m_pseudoPressure[index(ip, j)] - m_pseudoPressure[k]) / m_dx;
             v(i, j) = m_vp[k] - (m_pseudoPressure[index(i, jp)] - m_pseudoPressure[k]) / m_dy;
             p(i, j) = (m_rho / m_dt) * m_pseudoPressure[k];
-
-            //update u_max v_max
-            u(i,j) > u_max ? u_max = u(i,j) : u_max = u_max;
-            v(i,j) > v_max ? v_max = v(i,j) : v_max = v_max;
         }
     }
 
@@ -160,4 +165,6 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p)
     m_RuPrevious.swap(Ru);
     m_RvPrevious.swap(Rv);
     ++m_step;
+    m_time += m_dt;
 }
+

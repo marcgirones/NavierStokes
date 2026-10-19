@@ -1,3 +1,4 @@
+
 #ifndef SOLVER_H
 #define SOLVER_H
 
@@ -16,10 +17,10 @@ public:
     Solver& operator=(const Solver&) = delete;
 
     // One complete time step: AB2 predictor -> Poisson solve -> correction.
-    void step(Umesh& u, Vmesh& v, Pmesh& p);
+    void step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax);
 
     int getStep() const { return m_step; }
-    double getTime() const { return m_step * m_dt; }
+    double getTime() const { return m_time; }
     double getdt() const { return m_dt; }
 
 private:
@@ -27,6 +28,7 @@ private:
     double m_Lx, m_Ly, m_dx, m_dy;
     double m_nu, m_rho, m_dtd, m_dtc, m_dt;
     int m_step = 0;
+    double m_time = 0.0;
 
     // Previous R^n fields, flattened as j*Nx+i. R^{-1}=0 initially.
     std::vector<double> m_RuPrevious, m_RvPrevious;
