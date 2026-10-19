@@ -50,6 +50,8 @@ public:
     virtual double findy(int j) const = 0;
     virtual void coord(int i, int j, double* x, double* y) const = 0;
 
+    double max_val();
+
     void print_field() const;
 };
 

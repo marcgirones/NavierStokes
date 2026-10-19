@@ -9,7 +9,7 @@
 class Solver {
 public:
     Solver(int Nx, int Ny, double Lx, double Ly,
-           double nu, double rho, double dt);
+           double nu, double rho);
     ~Solver();
 
     Solver(const Solver&) = delete;
@@ -20,11 +20,12 @@ public:
 
     int getStep() const { return m_step; }
     double getTime() const { return m_step * m_dt; }
+    double getdt() const { return m_dt; }
 
 private:
     int m_Nx, m_Ny;
     double m_Lx, m_Ly, m_dx, m_dy;
-    double m_nu, m_rho, m_dt;
+    double m_nu, m_rho, m_dtd, m_dtc, m_dt;
     int m_step = 0;
 
     // Previous R^n fields, flattened as j*Nx+i. R^{-1}=0 initially.

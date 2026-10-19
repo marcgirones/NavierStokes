@@ -21,17 +21,10 @@ int main (int argc, char** argv)
 	// Simulation parameters: N, final time, viscosity, time step
 	const double tFinal = (argc > 2) ? std::atof(argv[2]) : 0.01;
 	const double nu = (argc > 3) ? std::atof(argv[3]) : 1.51e-5;
-	const double dt = (argc > 4) ? std::atof(argv[4]) : 1.0e-4;
 	const double rho = 1.0;
 
-	if (Nx < 1 || tFinal <= 0.0 || nu < 0.0 || dt <= 0.0) {
+	if (Nx < 1 || tFinal <= 0.0 || nu < 0.0) {
 		std::cerr << "Error: N and dt/tFinal must be positive, and nu must be non-negative.\n";
-		return 1;
-	}
-
-	const int nSteps = static_cast<int>(std::round(tFinal / dt));
-	if (nSteps < 1 || std::abs(nSteps * dt - tFinal) > 1e-12) {
-		std::cerr << "Error: tFinal must be a positive integer multiple of dt.\n";
 		return 1;
 	}
 
@@ -106,13 +99,15 @@ int main (int argc, char** argv)
 	/*******************************************************
 		PART B/C: PRESSURE-VELOCITY COUPLING AND TIME LOOP
 	*******************************************************/
-	Solver solver(Nx, Ny, Lx, Ly, nu, rho, dt);
-	for (int n = 0; n < nSteps; ++n) {
+	Solver solver(Nx, Ny, Lx, Ly, nu, rho);
+	double dt = solver.getdt();
+	for (double time = 0; time < tFinal; time += dt) {
 		solver.step(u, v, p);
-		if ((n + 1) % 10 == 0) {
-			std::cout << "Completed step " << solver.getStep()
+		std::cout << "Completed step " << solver.getStep()
+					  << ", dt = " << dt
 			          << ", t = " << solver.getTime() << "\n";
-		}
+
+		dt = solver.getdt();
 	}
 
 	// Final fields for inspection / verification.

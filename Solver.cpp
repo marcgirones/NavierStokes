@@ -5,18 +5,20 @@
 #include <cmath>
 #include <stdexcept>
 #include <algorithm>
+#include <chrono>
 
 Solver::Solver(int Nx, int Ny, double Lx, double Ly,
-               double nu, double rho, double dt)
+               double nu, double rho)
     : m_Nx(Nx), m_Ny(Ny), m_Lx(Lx), m_Ly(Ly),
-      m_dx(Lx / Nx), m_dy(Ly / Ny), m_nu(nu), m_rho(rho), m_dt(dt),
+      m_dx(Lx / Nx), m_dy(Ly / Ny), m_nu(nu), m_rho(rho),
+      m_dtd(0.5*((Lx/Nx)*(Lx/Nx))/nu),m_dtc(m_dtd),m_dt(m_dtc),
       m_RuPrevious(static_cast<std::size_t>(Nx) * Ny, 0.0),
       m_RvPrevious(static_cast<std::size_t>(Nx) * Ny, 0.0),
       m_up(static_cast<std::size_t>(Nx) * Ny, 0.0),
       m_vp(static_cast<std::size_t>(Nx) * Ny, 0.0),
       m_pseudoPressure(static_cast<std::size_t>(Nx) * Ny, 0.0)
 {
-    if (Nx < 2 || Ny < 2 || Lx <= 0.0 || Ly <= 0.0 || rho <= 0.0 || dt <= 0.0)
+    if (Nx < 2 || Ny < 2 || Lx <= 0.0 || Ly <= 0.0 || rho <= 0.0)
         throw std::invalid_argument("Invalid Solver dimensions or physical parameters");
 
     const std::size_t n = static_cast<std::size_t>(Nx) * Ny;
@@ -101,6 +103,7 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p)
     const double cellVolume = m_dx * m_dy;
     std::vector<double> Ru(m_RuPrevious.size());
     std::vector<double> Rv(m_RvPrevious.size());
+    double u_max = u.max_val(), v_max = v.max_val();
 
     // LOOP 1: convective/diffusive terms and AB2 predictor.
     // FVM functions are unchanged from the Part A verification.
@@ -111,6 +114,11 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p)
             const double difU  = FVM::computeDiffusiveU(i, j, u, m_nu);
             const double convV = FVM::computeConvectiveV(i, j, u, v);
             const double difV  = FVM::computeDiffusiveV(i, j, u, v, m_nu);
+
+            //dt determination
+
+            u_max > v_max ? m_dtc = (m_Lx/m_Nx)/u_max : m_dtc = (m_Lx/m_Nx)/v_max;
+            m_dtc > m_dtd ? m_dt = 0.1 * m_dtd : m_dt = 0.1 * m_dtc;
 
             // Momentum equation: du/dt = -C/V + D/V - (1/rho) grad(p).
             Ru[k] = (-convU + difU) / cellVolume;
@@ -141,6 +149,10 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p)
             u(i, j) = m_up[k] - (m_pseudoPressure[index(ip, j)] - m_pseudoPressure[k]) / m_dx;
             v(i, j) = m_vp[k] - (m_pseudoPressure[index(i, jp)] - m_pseudoPressure[k]) / m_dy;
             p(i, j) = (m_rho / m_dt) * m_pseudoPressure[k];
+
+            //update u_max v_max
+            u(i,j) > u_max ? u_max = u(i,j) : u_max = u_max;
+            v(i,j) > v_max ? v_max = v(i,j) : v_max = v_max;
         }
     }
 

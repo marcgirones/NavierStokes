@@ -8,7 +8,7 @@ FFT library
 sudo apt install libfftw3-dev
 
 Execution cpp
-./a.out N tFinal nu dt
+./a.out N tFinal nu
 
 Execution time convergence python (random values)
-python3 convergence_time_check.py --exe ./a.out --sizes 16 32 64 --time 0.01 --dt 0.0001 --nu 1.51e-5
+python3 convergence_time_check.py --exe ./a.out --sizes 16 32 64 128 --time 0.1 --nu 1.51e-5
