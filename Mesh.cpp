@@ -24,12 +24,12 @@ void Mesh::initialize (std::function<double(double,double)> init_cond)
 double Mesh::findxCenternode(int i) const { return m_Lex / 2.0 + m_Lex * i; }
 double Mesh::findyCenternode(int j) const { return m_Ley / 2.0 + m_Ley * j; }
 
-double Mesh::max_val(){
-    double maxval = 0;
-    for (int i = 0; i < m_Nx*m_Ny; i++){
+double Mesh::max_val() {
+    double maxval = 0.0;
 
-        m_field[i] > maxval ? maxval = m_field[i] : maxval = maxval;
-
+    for (int i = 0; i < m_Nx * m_Ny; i++) {
+        const double absval = std::abs(m_field[i]);
+        absval > maxval ? maxval = absval : maxval = maxval;
     }
 
     return maxval;
