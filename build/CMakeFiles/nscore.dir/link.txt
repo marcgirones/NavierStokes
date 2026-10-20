@@ -1,0 +1,2 @@
+/usr/bin/ar qc libnscore.a CMakeFiles/nscore.dir/src/Mesh.cpp.o CMakeFiles/nscore.dir/src/NavierStokesTerms.cpp.o CMakeFiles/nscore.dir/src/Solver.cpp.o
+/usr/bin/ranlib libnscore.a

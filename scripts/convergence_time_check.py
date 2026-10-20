@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 L = 1.0
 RHO_DEFAULT = 1.0
-NU_DEFAULT = 0.01  # Re = Umax*L/nu ~= 100 for Umax=L=1
+NU_DEFAULT = 1.51e-5  # Re = Umax*L/nu ~= 100 for Umax=L=1
 
 
 def exact_fields(n, time, nu, rho=RHO_DEFAULT):
@@ -90,7 +90,7 @@ def divergence(u, v, h):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--exe", default="./NS", help="path to compiled C++ solver")
+    ap.add_argument("--exe", default="../NS", help="path to compiled C++ solver")
     ap.add_argument("--sizes", type=int, nargs="+", default=[16, 32, 64],
                     help="mesh sizes N (square N x N grids)")
     ap.add_argument("--time", type=float, default=0.01, help="target final time")

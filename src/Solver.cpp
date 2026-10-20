@@ -1,6 +1,6 @@
 
-#include "Solver.h"
-#include "NavierStokesTerms.h"
+#include "Solver.hpp"
+#include "NavierStokesTerms.hpp"
 
 #include <fftw3.h>
 #include <cmath>
@@ -101,6 +101,7 @@ void Solver::solvePoissonFFT(const Umesh& u, const Vmesh& v)
 
 void Solver::step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax)
 {
+    //auto start_step = std::chrono::high_resolution_clock::now();
     const double cellVolume = m_dx * m_dy;
     std::vector<double> Ru(m_RuPrevious.size());
     std::vector<double> Rv(m_RvPrevious.size());
@@ -121,6 +122,8 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax)
 
     // LOOP 1: convective/diffusive terms and AB2 predictor.
     // FVM functions are unchanged from the Part A verification.
+    
+    //auto start_cd = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < m_Nx; ++i) {
         for (int j = 0; j < m_Ny; ++j) {
             const std::size_t k = index(i, j);
@@ -145,11 +148,17 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax)
         }
     }
 
+    //auto end_cd = std::chrono::high_resolution_clock::now();
     // Solve Laplacian(pseudoPressure) = div(predictor velocity).
+    //auto start_p = std::chrono::high_resolution_clock::now();
+
     solvePoissonFFT(u, v);
 
+    //auto end_p = std::chrono::high_resolution_clock::now();
     // LOOP 2: correct velocities and recover physical pressure p = rho/dt * p_tilde.
     // u(i,j) lies between pressure cells i and i+1; v(i,j) between j and j+1.
+    
+    //auto start_correction = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < m_Nx; ++i) {
         for (int j = 0; j < m_Ny; ++j) {
             const std::size_t k = index(i, j);
@@ -161,10 +170,25 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax)
         }
     }
 
+    //auto end_correction = std::chrono::high_resolution_clock::now();
     // Keep R^n for the next AB2 step. Initial previous R is zero (R^{-1}=0).
+
+    //auto start_update = std::chrono::high_resolution_clock::now();
     m_RuPrevious.swap(Ru);
     m_RvPrevious.swap(Rv);
     ++m_step;
     m_time += m_dt;
+
+    //auto end_update = std::chrono::high_resolution_clock::now();
+    //auto end_step = std::chrono::high_resolution_clock::now();
+    
+
+    //auto duration_step = std::chrono::duration_cast<std::chrono::microseconds>(end_step - start_step);
+    //auto duration_cd = std::chrono::duration_cast<std::chrono::microseconds>(end_cd - start_cd);
+    //auto duration_p = std::chrono::duration_cast<std::chrono::microseconds>(end_p - start_p);
+    //auto duration_correction = std::chrono::duration_cast<std::chrono::microseconds>(end_correction - start_correction);
+    //auto duration_update = std::chrono::duration_cast<std::chrono::microseconds>(end_update - start_update);
+
+    //std::cout<<"Duration: Total episode --> "<<duration_step.count()<<" || Conv/dif part --> "<<duration_cd.count()<<" || Pressure part --> "<<duration_p.count()<<" || Correction --> "<<duration_correction.count()<<" || Update --> "<<duration_update.count()<<"\n";
 }
 

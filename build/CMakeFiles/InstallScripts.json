@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/marcg/upc/fluids/NavierStokes/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

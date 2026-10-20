@@ -1,0 +1,4 @@
+/home/marcg/upc/fluids/NavierStokes/build/CMakeFiles/nscore.dir
+/home/marcg/upc/fluids/NavierStokes/build/CMakeFiles/NS.dir
+/home/marcg/upc/fluids/NavierStokes/build/CMakeFiles/edit_cache.dir
+/home/marcg/upc/fluids/NavierStokes/build/CMakeFiles/rebuild_cache.dir

@@ -1,7 +1,7 @@
 #ifndef NAVIER_STOKES_TERMS_H
 #define NAVIER_STOKES_TERMS_H
 
-#include "Mesh.h"
+#include "Mesh.hpp"
 
 namespace FVM {
 

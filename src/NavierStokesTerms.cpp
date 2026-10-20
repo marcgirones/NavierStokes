@@ -1,4 +1,4 @@
-#include "NavierStokesTerms.h"
+#include "NavierStokesTerms.hpp"
 
 namespace FVM {
 

@@ -1,4 +1,4 @@
-#include "Mesh.h"
+#include "Mesh.hpp"
 
 Mesh::Mesh(int Nx, int Ny, double Lx, double Ly) 
     : m_Nx{Nx}, m_Ny{Ny}, m_Lx{Lx}, m_Ly{Ly}, 

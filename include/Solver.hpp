@@ -2,7 +2,7 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
-#include "Mesh.h"
+#include "Mesh.hpp"
 #include <vector>
 
 // Time integrator and pressure-velocity coupling for the periodic 2-D case.
