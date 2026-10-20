@@ -5,9 +5,9 @@
 #include <iomanip>     // setprecision
 #include <string>      // to_string
 #include <algorithm>   // max
-#include "Mesh.h"
-#include "NavierStokesTerms.h"
-#include "Solver.h"
+#include "Mesh.hpp"
+#include "NavierStokesTerms.hpp"
+#include "Solver.hpp"
 #define Lx 1.0
 #define Ly 1.0
 
