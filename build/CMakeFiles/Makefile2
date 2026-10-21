@@ -64,12 +64,12 @@ CMAKE_BINARY_DIR = /home/marcg/upc/fluids/NavierStokes/build
 
 # The main recursive "all" target.
 all: CMakeFiles/nscore.dir/all
-all: CMakeFiles/NS.dir/all
+all: CMakeFiles/case_A.dir/all
 .PHONY : all
 
 # The main recursive "codegen" target.
 codegen: CMakeFiles/nscore.dir/codegen
-codegen: CMakeFiles/NS.dir/codegen
+codegen: CMakeFiles/case_A.dir/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
@@ -78,7 +78,7 @@ preinstall:
 
 # The main recursive "clean" target.
 clean: CMakeFiles/nscore.dir/clean
-clean: CMakeFiles/NS.dir/clean
+clean: CMakeFiles/case_A.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -114,36 +114,36 @@ CMakeFiles/nscore.dir/clean:
 .PHONY : CMakeFiles/nscore.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/NS.dir
+# Target rules for target CMakeFiles/case_A.dir
 
 # All Build rule for target.
-CMakeFiles/NS.dir/all: CMakeFiles/nscore.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/NS.dir/build.make CMakeFiles/NS.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/NS.dir/build.make CMakeFiles/NS.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/marcg/upc/fluids/NavierStokes/build/CMakeFiles --progress-num=1,2 "Built target NS"
-.PHONY : CMakeFiles/NS.dir/all
+CMakeFiles/case_A.dir/all: CMakeFiles/nscore.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/marcg/upc/fluids/NavierStokes/build/CMakeFiles --progress-num=1,2 "Built target case_A"
+.PHONY : CMakeFiles/case_A.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/NS.dir/rule: cmake_check_build_system
+CMakeFiles/case_A.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/marcg/upc/fluids/NavierStokes/build/CMakeFiles 6
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/NS.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/case_A.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/marcg/upc/fluids/NavierStokes/build/CMakeFiles 0
-.PHONY : CMakeFiles/NS.dir/rule
+.PHONY : CMakeFiles/case_A.dir/rule
 
 # Convenience name for target.
-NS: CMakeFiles/NS.dir/rule
-.PHONY : NS
+case_A: CMakeFiles/case_A.dir/rule
+.PHONY : case_A
 
 # codegen rule for target.
-CMakeFiles/NS.dir/codegen:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/NS.dir/build.make CMakeFiles/NS.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/marcg/upc/fluids/NavierStokes/build/CMakeFiles --progress-num=1,2 "Finished codegen for target NS"
-.PHONY : CMakeFiles/NS.dir/codegen
+CMakeFiles/case_A.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/marcg/upc/fluids/NavierStokes/build/CMakeFiles --progress-num=1,2 "Finished codegen for target case_A"
+.PHONY : CMakeFiles/case_A.dir/codegen
 
 # clean rule for target.
-CMakeFiles/NS.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/NS.dir/build.make CMakeFiles/NS.dir/clean
-.PHONY : CMakeFiles/NS.dir/clean
+CMakeFiles/case_A.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/clean
+.PHONY : CMakeFiles/case_A.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

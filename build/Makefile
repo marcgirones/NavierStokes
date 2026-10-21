@@ -130,41 +130,41 @@ nscore/fast:
 .PHONY : nscore/fast
 
 #=============================================================================
-# Target rules for targets named NS
+# Target rules for targets named case_A
 
 # Build rule for target.
-NS: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 NS
-.PHONY : NS
+case_A: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 case_A
+.PHONY : case_A
 
 # fast build rule for target.
-NS/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/NS.dir/build.make CMakeFiles/NS.dir/build
-.PHONY : NS/fast
+case_A/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/build
+.PHONY : case_A/fast
 
-main/NS.o: main/NS.cpp.o
-.PHONY : main/NS.o
+main/case_A.o: main/case_A.cpp.o
+.PHONY : main/case_A.o
 
 # target to build an object file
-main/NS.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/NS.dir/build.make CMakeFiles/NS.dir/main/NS.cpp.o
-.PHONY : main/NS.cpp.o
+main/case_A.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/main/case_A.cpp.o
+.PHONY : main/case_A.cpp.o
 
-main/NS.i: main/NS.cpp.i
-.PHONY : main/NS.i
+main/case_A.i: main/case_A.cpp.i
+.PHONY : main/case_A.i
 
 # target to preprocess a source file
-main/NS.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/NS.dir/build.make CMakeFiles/NS.dir/main/NS.cpp.i
-.PHONY : main/NS.cpp.i
+main/case_A.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/main/case_A.cpp.i
+.PHONY : main/case_A.cpp.i
 
-main/NS.s: main/NS.cpp.s
-.PHONY : main/NS.s
+main/case_A.s: main/case_A.cpp.s
+.PHONY : main/case_A.s
 
 # target to generate assembly for a file
-main/NS.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/NS.dir/build.make CMakeFiles/NS.dir/main/NS.cpp.s
-.PHONY : main/NS.cpp.s
+main/case_A.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/main/case_A.cpp.s
+.PHONY : main/case_A.cpp.s
 
 src/Mesh.o: src/Mesh.cpp.o
 .PHONY : src/Mesh.o
@@ -246,11 +246,11 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... NS"
+	@echo "... case_A"
 	@echo "... nscore"
-	@echo "... main/NS.o"
-	@echo "... main/NS.i"
-	@echo "... main/NS.s"
+	@echo "... main/case_A.o"
+	@echo "... main/case_A.i"
+	@echo "... main/case_A.s"
 	@echo "... src/Mesh.o"
 	@echo "... src/Mesh.i"
 	@echo "... src/Mesh.s"

@@ -65,7 +65,7 @@ int main (int argc, char** argv)
 	double convU=0, convV=0, difU=0, difV=0;
 
 	// Open CSV file for writing
-	std::ofstream file("results/datos" + std::to_string(Nx) + ".csv");
+	std::ofstream file("datos" + std::to_string(Nx) + ".csv");
 	if (!file) {
 		std::cerr << "Error: could not open Part A CSV output.\n";
 		return 1;
@@ -95,5 +95,4 @@ int main (int argc, char** argv)
 	// Close the Part A verification file. The original verification loop above
 	// is intentionally preserved unchanged.
 	file.close();
-
-
+}

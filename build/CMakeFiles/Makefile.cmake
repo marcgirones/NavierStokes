@@ -51,5 +51,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/nscore.dir/DependInfo.cmake"
-  "CMakeFiles/NS.dir/DependInfo.cmake"
+  "CMakeFiles/case_A.dir/DependInfo.cmake"
   )

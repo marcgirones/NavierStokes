@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 L = 1.0
 RHO_DEFAULT = 1.0
-NU_DEFAULT = 1.51e-5  # Re = Umax*L/nu ~= 100 for Umax=L=1
+NU_DEFAULT = 1.51e-5 
 
 
 def exact_fields(n, time, nu, rho=RHO_DEFAULT):
@@ -90,14 +90,14 @@ def divergence(u, v, h):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--exe", default="../NS", help="path to compiled C++ solver")
-    ap.add_argument("--sizes", type=int, nargs="+", default=[16, 32, 64],
+    ap.add_argument("--exe", default="../case_A", help="path to compiled C++ solver")
+    ap.add_argument("--sizes", type=int, nargs="+", default=[16, 32, 64, 128, 256],
                     help="mesh sizes N (square N x N grids)")
     ap.add_argument("--time", type=float, default=0.01, help="target final time")
     ap.add_argument("--nu", type=float, default=NU_DEFAULT, help="kinematic viscosity")
     ap.add_argument("--rho", type=float, default=RHO_DEFAULT, help="density")
-    ap.add_argument("--workdir", default="validation_runs", help="output directory")
-    ap.add_argument("--out", default="validation_results", help="plots/output folder")
+    ap.add_argument("--workdir", default="../results/validation_runs", help="output directory")
+    ap.add_argument("--out", default="../results/validation_results", help="plots/output folder")
     args = ap.parse_args()
 
     if args.time < 0 or args.nu < 0 or args.rho <= 0:

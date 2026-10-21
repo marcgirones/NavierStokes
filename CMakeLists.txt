@@ -45,11 +45,12 @@ target_compile_options(nscore PRIVATE -Wall -Wextra)
 # --- Ejecutable ---------------------------------------------------------------
 # Se llama "NS" porque es el valor por defecto de --exe en
 # scripts/convergence_time_check.py
-add_executable(NS main/NS.cpp)
-target_link_libraries(NS PRIVATE nscore)
-target_compile_options(NS PRIVATE -Wall -Wextra)
+#add_executable(NS main/NS.cpp)
+add_executable(case_A main/case_A.cpp)
+target_link_libraries(case_A PRIVATE nscore)
+target_compile_options(case_A PRIVATE -Wall -Wextra)
 
 # Copia el ejecutable junto a la raíz del proyecto para poder usar ./NS
-add_custom_command(TARGET NS POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:NS> ${CMAKE_SOURCE_DIR}/NS
-  COMMENT "Copiando NS a la raíz del proyecto")
+add_custom_command(TARGET case_A POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:case_A> ${CMAKE_SOURCE_DIR}/case_A
+  COMMENT "Copiando case_A a la raíz del proyecto")

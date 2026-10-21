@@ -91,10 +91,10 @@ def errors_for(n: int, data: np.ndarray) -> list:
 # --------------------------------------------------------------------- main --
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--exe", default="./a.out", help="path to the compiled C++ binary")
-    ap.add_argument("--sizes", type=int, nargs="+", default=[10, 50, 100, 150, 200])
-    ap.add_argument("--workdir", default="runs", help="directory where the binary is run")
-    ap.add_argument("--out", default="results/convergence.png")
+    ap.add_argument("--exe", default="../case_A", help="path to the compiled C++ binary")
+    ap.add_argument("--sizes", type=int, nargs="+", default=[4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048])
+    ap.add_argument("--workdir", default="../results/c_d_validation", help="directory where the binary is run")
+    ap.add_argument("--out", default="../results/c_d_validation/c_d_convergence.png")
     args = ap.parse_args()
 
     exe, workdir = Path(args.exe), Path(args.workdir)
