@@ -49,7 +49,16 @@ public:
     virtual double findx(int i) const = 0;
     virtual double findy(int j) const = 0;
     virtual void coord(int i, int j, double* x, double* y) const = 0;
-
+	
+    int goeast(int i, int j);
+    int goeast(int i);
+    int gowest(int i, int j);
+    int gowest(int i);
+    int gonorth(int i, int j);
+    int gonorth(int i);
+    int gosouth(int i, int j);
+    int gosouth(int i);
+    
     double max_val();
 
     void print_field() const;

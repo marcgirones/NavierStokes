@@ -19,11 +19,10 @@ int main (int argc, char** argv)
 	const int Ny = Nx;
 
 	// Simulation parameters: N, final time, viscosity, time step
-	const double tFinal = (argc > 2) ? std::atof(argv[2]) : 0.01;
-	const double nu = (argc > 3) ? std::atof(argv[3]) : 1.51e-5;
+	const double nu = (argc > 2) ? std::atof(argv[3]) : 1.51e-5;
 	const double rho = 1.0;
 
-	if (Nx < 1 || tFinal <= 0.0 || nu < 0.0) {
+	if (Nx < 1 || nu < 0.0) {
 		std::cerr << "Error: N and dt/tFinal must be positive, and nu must be non-negative.\n";
 		return 1;
 	}
@@ -57,12 +56,17 @@ int main (int argc, char** argv)
 		//else return 0.0;
 	});
 
+	for(int i=0; i<Nx; i++){
+		for(int j=0; j<Ny; j++){
+		std::cout<<"Estem a "<<i<<", "<<j<<" || Est: "<<p.goeast(i, j)<<" || Oest: "<<p.gowest(i, j)<<" || Nort: "<<p.gonorth(i, j)<<" || Sud: "<<p.gosouth(i, j)<<"\n";
+		}
+	}
 
 
 	/*******************************************************
 		PART A CONVECTIVE AND DIFUSIVE TERM COMPUTATION
 	********************************************************/
-	double convU=0, convV=0, difU=0, difV=0;
+	/*double convU=0, convV=0, difU=0, difV=0;
 
 	// Open CSV file for writing
 	std::ofstream file("datos" + std::to_string(Nx) + ".csv");
@@ -94,5 +98,5 @@ int main (int argc, char** argv)
 
 	// Close the Part A verification file. The original verification loop above
 	// is intentionally preserved unchanged.
-	file.close();
+	file.close();*/
 }

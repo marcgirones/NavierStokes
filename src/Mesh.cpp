@@ -24,6 +24,33 @@ void Mesh::initialize (std::function<double(double,double)> init_cond)
 double Mesh::findxCenternode(int i) const { return m_Lex / 2.0 + m_Lex * i; }
 double Mesh::findyCenternode(int j) const { return m_Ley / 2.0 + m_Ley * j; }
 
+int Mesh::goeast (int i, int j){
+	return j*m_Nx + (i+1+m_Nx)%m_Nx;
+}
+int Mesh::goeast (int i){
+	return (i/m_Nx)*m_Nx + (i+1)%m_Nx;
+}
+
+int Mesh::gowest (int i, int j){
+	return j*m_Nx + (i-1+m_Nx)%m_Nx;
+}
+int Mesh::gowest (int i){
+	return (i/m_Nx)*m_Nx + (i-1+m_Nx)%m_Nx;
+}
+int Mesh::gonorth (int i, int j){
+	return ((j+1)%m_Ny)*m_Nx + i;
+}
+int Mesh::gonorth (int i){
+	return i%m_Nx + (((i/m_Nx)+1)%m_Ny)*m_Nx;
+}
+int Mesh::gosouth (int i, int j){
+	return ((j-1+m_Ny)%m_Ny)*m_Nx + i;
+}
+int Mesh::gosouth (int i){
+	return i%m_Nx + (((i/m_Nx)-1+m_Ny)%m_Ny)*m_Nx; 
+}
+
+
 double Mesh::max_val() {
     double maxval = 0.0;
 

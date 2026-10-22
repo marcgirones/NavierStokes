@@ -86,5 +86,7 @@ int main (int argc, char** argv)
 		
 	solver.step(u, v, p, 0.1);
 
-
-
+	for(int ii = 0; ii<Nx*Ny; ii++){
+		
+	}
+}
