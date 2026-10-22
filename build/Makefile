@@ -142,6 +142,19 @@ case_A/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/build
 .PHONY : case_A/fast
 
+#=============================================================================
+# Target rules for targets named case_C
+
+# Build rule for target.
+case_C: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 case_C
+.PHONY : case_C
+
+# fast build rule for target.
+case_C/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_C.dir/build.make CMakeFiles/case_C.dir/build
+.PHONY : case_C/fast
+
 main/case_A.o: main/case_A.cpp.o
 .PHONY : main/case_A.o
 
@@ -165,6 +178,30 @@ main/case_A.s: main/case_A.cpp.s
 main/case_A.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/main/case_A.cpp.s
 .PHONY : main/case_A.cpp.s
+
+main/case_C.o: main/case_C.cpp.o
+.PHONY : main/case_C.o
+
+# target to build an object file
+main/case_C.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_C.dir/build.make CMakeFiles/case_C.dir/main/case_C.cpp.o
+.PHONY : main/case_C.cpp.o
+
+main/case_C.i: main/case_C.cpp.i
+.PHONY : main/case_C.i
+
+# target to preprocess a source file
+main/case_C.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_C.dir/build.make CMakeFiles/case_C.dir/main/case_C.cpp.i
+.PHONY : main/case_C.cpp.i
+
+main/case_C.s: main/case_C.cpp.s
+.PHONY : main/case_C.s
+
+# target to generate assembly for a file
+main/case_C.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_C.dir/build.make CMakeFiles/case_C.dir/main/case_C.cpp.s
+.PHONY : main/case_C.cpp.s
 
 src/Mesh.o: src/Mesh.cpp.o
 .PHONY : src/Mesh.o
@@ -247,10 +284,14 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... case_A"
+	@echo "... case_C"
 	@echo "... nscore"
 	@echo "... main/case_A.o"
 	@echo "... main/case_A.i"
 	@echo "... main/case_A.s"
+	@echo "... main/case_C.o"
+	@echo "... main/case_C.i"
+	@echo "... main/case_C.s"
 	@echo "... src/Mesh.o"
 	@echo "... src/Mesh.i"
 	@echo "... src/Mesh.s"

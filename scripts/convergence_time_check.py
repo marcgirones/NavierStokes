@@ -15,6 +15,7 @@ from pathlib import Path
 
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 L = 1.0
 RHO_DEFAULT = 1.0
@@ -90,10 +91,10 @@ def divergence(u, v, h):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--exe", default="../case_A", help="path to compiled C++ solver")
-    ap.add_argument("--sizes", type=int, nargs="+", default=[16, 32, 64, 128, 256],
+    ap.add_argument("--exe", default="../case_C", help="path to compiled C++ solver")
+    ap.add_argument("--sizes", type=int, nargs="+", default=[16, 32, 64, 128, 256, 512],
                     help="mesh sizes N (square N x N grids)")
-    ap.add_argument("--time", type=float, default=0.01, help="target final time")
+    ap.add_argument("--time", type=float, default=1, help="target final time")
     ap.add_argument("--nu", type=float, default=NU_DEFAULT, help="kinematic viscosity")
     ap.add_argument("--rho", type=float, default=RHO_DEFAULT, help="density")
     ap.add_argument("--workdir", default="../results/validation_runs", help="output directory")
@@ -122,11 +123,19 @@ def main():
 
     for n in sizes:
         print(f"Running N={n}, target t={args.time:g} ...", flush=True)
+        
+        start = time.perf_counter()
 
         case_dir, fields, _, actual_time = run_case(
             exe, n, args.time, args.nu, args.rho, workdir
         )
+        end = time.perf_counter()
+
+        elapse = end-start
+
         actual_times.append(actual_time)
+
+        print(f"  Time computing: {elapse}")
 
         print(f"  Actual final time: {actual_time:.12g}")
 

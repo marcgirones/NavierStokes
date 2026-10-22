@@ -12,3 +12,7 @@ Execution cpp
 
 Execution time convergence python (random values)
 python3 convergence_time_check.py --exe ./a.out --sizes 16 32 64 128 --time 2 --nu 1.51e-5
+
+Build project:
+cmake -S . -B build
+cmake --build build

@@ -48,9 +48,16 @@ target_compile_options(nscore PRIVATE -Wall -Wextra)
 #add_executable(NS main/NS.cpp)
 add_executable(case_A main/case_A.cpp)
 target_link_libraries(case_A PRIVATE nscore)
-target_compile_options(case_A PRIVATE -Wall -Wextra)
+
+add_executable(case_C main/case_C.cpp)
+target_link_libraries(case_C PRIVATE nscore)
+
+foreach(target nscore case_A case_C)
+	target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
+endforeach()
 
 # Copia el ejecutable junto a la raíz del proyecto para poder usar ./NS
 add_custom_command(TARGET case_A POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:case_A> ${CMAKE_SOURCE_DIR}/case_A
-  COMMENT "Copiando case_A a la raíz del proyecto")
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:case_C> ${CMAKE_SOURCE_DIR}/case_C
+	COMMENT "Copiando case_A a la raíz del proyecto")

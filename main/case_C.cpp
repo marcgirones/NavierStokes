@@ -46,15 +46,11 @@ int main (int argc, char** argv)
 	{
 		double a = cos(2*M_PI*x)*sin(2*M_PI*y);
 		return a;
-		//if((a>0 && a>1e-10) || (a<0 && a<-1e-10)) return a;
-		//else return 0.0;
 	});
 	v.initialize([](double x, double y)
 	{
 		double a = -sin(2*M_PI*x)*cos(2*M_PI*y);
 		return a;
-		//if((a>0 && a>1e-10) || (a<0 && a<-1e-10)) return a;
-		//else return 0.0;
 	});
 
 
