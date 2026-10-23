@@ -78,6 +78,7 @@ public:
     double findx(int i) const override;
     double findy(int j) const override;
     void coord(int i, int j, double* x, double* y) const override;
+    double gradi(int i);
 };
 
 class Vmesh : public Mesh {
@@ -86,6 +87,7 @@ public:
     double findx(int i) const override;
     double findy(int j) const override;
     void coord(int i, int j, double* x, double* y) const override;
+    double gradi (int i);
 };
 
 #endif // MESH_H

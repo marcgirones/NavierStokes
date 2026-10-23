@@ -6,8 +6,6 @@ Mesh::Mesh(int Nx, int Ny, double Lx, double Ly)
       m_Ley{m_Ly / static_cast<double>(m_Ny)}, 
       m_field(Nx * Ny, 0.0) 
 {
-    /*std::cout << "mesh: elements ( " << m_Nx << ", " << m_Ny 
-              << " ), dimensions ( " << m_Lex << ", " << m_Ley << " )\n";*/
 }
 
 void Mesh::initialize (std::function<double(double,double)> init_cond)
@@ -70,6 +68,9 @@ void Mesh::print_field() const {
         std::cout << "\n";
     }
 }
+double Mesh::getFieldValue (int i){
+	return m_field[i];
+}
 
 // Pmesh
 Pmesh::Pmesh(int Nx, int Ny, double Lx, double Ly) : Mesh(Nx, Ny, Lx, Ly) {}
@@ -86,6 +87,9 @@ double Umesh::findy(int j) const { return findyCenternode(j); }
 void Umesh::coord(int i, int j, double* x, double* y) const {
     *x = findx(i); *y = findy(j);
 }
+double Umesh::gradi (int ii){
+	return (getFieldValue(ii) + getFieldValue(goeast(ii)))/getLex();
+}
 
 // Vmesh
 Vmesh::Vmesh(int Nx, int Ny, double Lx, double Ly) : Mesh(Nx, Ny, Lx, Ly) {}
@@ -94,3 +98,5 @@ double Vmesh::findy(int j) const { return (1 + j) * getLey(); }
 void Vmesh::coord(int i, int j, double* x, double* y) const {
     *x = findx(i); *y = findy(j);
 }
+double Vmesh::gradi (int ii){
+	return (getFieldValue(ii) + getFieldValue(gonorth(ii)))/getLey();}

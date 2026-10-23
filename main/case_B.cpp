@@ -86,7 +86,10 @@ int main (int argc, char** argv)
 		
 	solver.step(u, v, p, 0.1);
 
+	double maxdiv=0;
+
 	for(int ii = 0; ii<Nx*Ny; ii++){
-		
+		dudx = (u.field(ii) + u.field(goeast(ii))/(Nx/Lx);
+		dvdy = (v.field(ii) + v.field(gonorth(ii))/(Ny/Ly);
 	}
 }

@@ -45,28 +45,18 @@ int main (int argc, char** argv)
 	{
 		double a = cos(2*M_PI*x)*sin(2*M_PI*y);
 		return a;
-		//if((a>0 && a>1e-10) || (a<0 && a<-1e-10)) return a;
-		//else return 0.0;
 	});
 	v.initialize([](double x, double y)
 	{
 		double a = -sin(2*M_PI*x)*cos(2*M_PI*y);
 		return a;
-		//if((a>0 && a>1e-10) || (a<0 && a<-1e-10)) return a;
-		//else return 0.0;
 	});
-
-	for(int i=0; i<Nx; i++){
-		for(int j=0; j<Ny; j++){
-		std::cout<<"Estem a "<<i<<", "<<j<<" || Est: "<<p.goeast(i, j)<<" || Oest: "<<p.gowest(i, j)<<" || Nort: "<<p.gonorth(i, j)<<" || Sud: "<<p.gosouth(i, j)<<"\n";
-		}
-	}
 
 
 	/*******************************************************
 		PART A CONVECTIVE AND DIFUSIVE TERM COMPUTATION
 	********************************************************/
-	/*double convU=0, convV=0, difU=0, difV=0;
+	double convU=0, convV=0, difU=0, difV=0;
 
 	// Open CSV file for writing
 	std::ofstream file("datos" + std::to_string(Nx) + ".csv");
@@ -98,5 +88,5 @@ int main (int argc, char** argv)
 
 	// Close the Part A verification file. The original verification loop above
 	// is intentionally preserved unchanged.
-	file.close();*/
+	file.close();
 }
