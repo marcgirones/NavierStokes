@@ -143,6 +143,19 @@ case_A/fast:
 .PHONY : case_A/fast
 
 #=============================================================================
+# Target rules for targets named case_B
+
+# Build rule for target.
+case_B: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 case_B
+.PHONY : case_B
+
+# fast build rule for target.
+case_B/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_B.dir/build.make CMakeFiles/case_B.dir/build
+.PHONY : case_B/fast
+
+#=============================================================================
 # Target rules for targets named case_C
 
 # Build rule for target.
@@ -161,6 +174,7 @@ main/case_A.o: main/case_A.cpp.o
 # target to build an object file
 main/case_A.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/main/case_A.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_B.dir/build.make CMakeFiles/case_B.dir/main/case_A.cpp.o
 .PHONY : main/case_A.cpp.o
 
 main/case_A.i: main/case_A.cpp.i
@@ -169,6 +183,7 @@ main/case_A.i: main/case_A.cpp.i
 # target to preprocess a source file
 main/case_A.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/main/case_A.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_B.dir/build.make CMakeFiles/case_B.dir/main/case_A.cpp.i
 .PHONY : main/case_A.cpp.i
 
 main/case_A.s: main/case_A.cpp.s
@@ -177,6 +192,7 @@ main/case_A.s: main/case_A.cpp.s
 # target to generate assembly for a file
 main/case_A.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/main/case_A.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_B.dir/build.make CMakeFiles/case_B.dir/main/case_A.cpp.s
 .PHONY : main/case_A.cpp.s
 
 main/case_C.o: main/case_C.cpp.o
@@ -284,6 +300,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... case_A"
+	@echo "... case_B"
 	@echo "... case_C"
 	@echo "... nscore"
 	@echo "... main/case_A.o"

@@ -73,7 +73,7 @@ def errors_for(n: int, data: np.ndarray) -> list:
     conv_u, conv_v, dif_u, dif_v = (data[:, c] / h**2 for c in range(4))
 
     # CSV row = i*N + j  (i outer, j inner)  ->  reshape to [i, j]
-    conv_u, conv_v, dif_u, dif_v = (a.reshape(n, n) for a in (conv_u, conv_v, dif_u, dif_v))
+    conv_u, conv_v, dif_u, dif_v = (a.reshape(n, n).T for a in (conv_u, conv_v, dif_u, dif_v))
 
     i, j = np.meshgrid(np.arange(n), np.arange(n), indexing="ij")  # 0-based
     # Staggered positions: u(i,j) at ((i+1)h, (j+1/2)h); v(i,j) at ((i+1/2)h, (j+1)h)
@@ -92,7 +92,7 @@ def errors_for(n: int, data: np.ndarray) -> list:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--exe", default="../case_A", help="path to the compiled C++ binary")
-    ap.add_argument("--sizes", type=int, nargs="+", default=[4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048])
+    ap.add_argument("--sizes", type=int, nargs="+", default=[4, 8, 16, 32, 64, 128, 256, 512, 1024])
     ap.add_argument("--workdir", default="../results/c_d_validation", help="directory where the binary is run")
     ap.add_argument("--out", default="../results/c_d_validation/c_d_convergence.png")
     args = ap.parse_args()

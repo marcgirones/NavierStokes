@@ -32,10 +32,10 @@ double computeConvectiveU(int i, const Umesh& u, const Vmesh& v) {
     const double dx = u.getLex();
 
     // 1. Valores transportados en las caras (Promedio centrado de U)
-    double u_e = 0.5 * (u.getFieldValue(u.goeast(i)) + u.getFieldValue(i);
-    double u_w = 0.5 * (u.getFieldValue(u.gowest(i)) + u.getFieldValue(i);
-    double u_n = 0.5 * (u.getFieldValue(u.gonorth(i)) + u.getFieldValue(i);
-    double u_s = 0.5 * (u.getFieldValue(u.gosouth(i)) + u.getFieldValue(i);
+    double u_e = 0.5 * (u.getFieldValue(u.goeast(i)) + u.getFieldValue(i));
+    double u_w = 0.5 * (u.getFieldValue(u.gowest(i)) + u.getFieldValue(i));
+    double u_n = 0.5 * (u.getFieldValue(u.gonorth(i)) + u.getFieldValue(i));
+    double u_s = 0.5 * (u.getFieldValue(u.gosouth(i)) + u.getFieldValue(i));
 
     // 2. Flujos masicos evaluados en sus posiciones naturales
     // Caras Este/Oeste (U-velocidad)
@@ -43,7 +43,7 @@ double computeConvectiveU(int i, const Umesh& u, const Vmesh& v) {
     double F_w = 0.5 * (u.getFieldValue(u.gowest(i)) + u.getFieldValue(i)) * dy;
 
     // Caras Norte/Sur (V-velocidad interpolada al volumen de U)
-    double F_n = 0.5 * (v.getFieldValue(i) + v.getFieldValue(v.goeast(i)) * dx;
+    double F_n = 0.5 * (v.getFieldValue(i) + v.getFieldValue(v.goeast(i))) * dx;
     double F_s = 0.5 * (v.getFieldValue(v.gosouth(i)) + v.getFieldValue(v.gosouth(v.goeast(i)))) * dx;
 
     return (F_e * u_e - F_w * u_w) + (F_n * u_n - F_s * u_s);
@@ -70,7 +70,7 @@ double computeDiffusiveU(int i, const Umesh& u, double nu) {
     const double dy = u.getLey();
 
     // Derivadas en las caras del volumen de control de U
-    double dudx_e = (u.getFieldValue(u.goeast(i)) - u.getFieldValue(i))     / dx;
+    double dudx_e = (u.getFieldValue(u.goeast(i)) - u.getFieldValue(i)) / dx;
     double dudx_w = (u.getFieldValue(i) - u.getFieldValue(u.gowest(i))) / dx;
     double dudy_n = (u.getFieldValue(u.gonorth(i)) - u.getFieldValue(i))     / dy;
     double dudy_s = (u.getFieldValue(i) - u.getFieldValue(u.gosouth(i))) / dy;
@@ -109,9 +109,9 @@ double computeConvectiveV(int i, const Umesh& u, const Vmesh& v) {
     double v_s = 0.5 * (v.getFieldValue(v.gosouth(i)) + v.getFieldValue(i));
 
     // Flujos masicos interpolados al volumen de V
-    double F_e = 0.5 * (u.getFieldValue(i) + u.getFieldValue(Mesh::gonorth(i))) * dy;
+    double F_e = 0.5 * (u.getFieldValue(i) + u.getFieldValue(u.gonorth(i))) * dy;
     double F_w = 0.5 * (u.getFieldValue(u.gowest(i)) + u.getFieldValue(u.gonorth(u.gowest(i)))) * dy;
-    double F_n = 0.5 * (v.getFieldValue(v.gonorth(i)) + v.getFieldValue(i) * dx;
+    double F_n = 0.5 * (v.getFieldValue(v.gonorth(i)) + v.getFieldValue(i)) * dx;
     double F_s = 0.5 * (v.getFieldValue(i) + v.getFieldValue(v.gosouth(i))) * dx;
 
     return (F_e * v_e - F_w * v_w) + (F_n * v_n - F_s * v_s);
@@ -136,7 +136,7 @@ double computeDiffusiveV(int i, const Umesh& u, const Vmesh& v, double nu) {
 
     double dvdx_e = (v.getFieldValue(v.goeast(i)) - v.getFieldValue(i)) / dx;
     double dvdx_w = (v.getFieldValue(i) - v.getFieldValue(v.gowest(i))) / dx;
-    double dvdy_n = (v.getFieldValue(v.gonorth(i) - v.getFieldValue(i)) / dy;
+    double dvdy_n = (v.getFieldValue(v.gonorth(i)) - v.getFieldValue(i)) / dy;
     double dvdy_s = (v.getFieldValue(i) - v.getFieldValue(v.gosouth(i))) / dy;
 
     return nu * ((dvdx_e - dvdx_w) * dy + (dvdy_n - dvdy_s) * dx);

@@ -39,8 +39,8 @@ public:
     int getNy() const { return m_Ny; }
     double getLex() const { return m_Lex; }
     double getLey() const { return m_Ley; }
-	double getFieldValue(int i);
-	double getFieldValue(int i, int j);
+	double getFieldValue(int i) const;
+	double getFieldValue(int i, int j) const;
 
 	void initialize(std::function<double(double,double)> init_cond);
     double findxCenternode(int i) const;
@@ -50,14 +50,14 @@ public:
     virtual double findy(int j) const = 0;
     virtual void coord(int i, int j, double* x, double* y) const = 0;
 	
-    int goeast(int i, int j);
-    int goeast(int i);
-    int gowest(int i, int j);
-    int gowest(int i);
-    int gonorth(int i, int j);
-    int gonorth(int i);
-    int gosouth(int i, int j);
-    int gosouth(int i);
+    int goeast(int i, int j) const;
+    int goeast(int i) const;
+    int gowest(int i, int j) const;
+    int gowest(int i) const;
+    int gonorth(int i, int j) const;
+    int gonorth(int i) const;
+    int gosouth(int i, int j) const;
+    int gosouth(int i) const;
     
     double max_val();
 
@@ -78,7 +78,7 @@ public:
     double findx(int i) const override;
     double findy(int j) const override;
     void coord(int i, int j, double* x, double* y) const override;
-    double gradi(int i);
+    double gradi(int i) const;
 };
 
 class Vmesh : public Mesh {
@@ -87,7 +87,7 @@ public:
     double findx(int i) const override;
     double findy(int j) const override;
     void coord(int i, int j, double* x, double* y) const override;
-    double gradi (int i);
+    double gradi (int i) const;
 };
 
 #endif // MESH_H

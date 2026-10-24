@@ -52,5 +52,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/nscore.dir/DependInfo.cmake"
   "CMakeFiles/case_A.dir/DependInfo.cmake"
+  "CMakeFiles/case_B.dir/DependInfo.cmake"
   "CMakeFiles/case_C.dir/DependInfo.cmake"
   )

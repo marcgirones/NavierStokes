@@ -19,7 +19,7 @@ int main (int argc, char** argv)
 	const int Ny = Nx;
 
 	// Simulation parameters: N, final time, viscosity, time step
-	const double nu = (argc > 2) ? std::atof(argv[3]) : 1.51e-5;
+	const double nu = (argc > 2) ? std::atof(argv[2]) : 1.51e-5;
 	const double rho = 1.0;
 
 	if (Nx < 1 || nu < 0.0) {
@@ -68,8 +68,20 @@ int main (int argc, char** argv)
 
 	// Write header row
 	file << "convU,convV,difU,difV\n";
+	for (int i=0; i<Nx*Ny; i++)
+	{
+		// Compute convective and diffusive terms
+		convU = FVM::computeConvectiveU(i, u, v);
+		difU = FVM::computeDiffusiveU(i, u, nu);
 
-	for (int i=0; i<Nx; i++)
+		convV = FVM::computeConvectiveV(i, u, v);
+		difV = FVM::computeDiffusiveV(i, u, v, nu);
+
+		// Write row values separated by commas
+		file << convU << "," << convV << "," << difU << "," << difV << "\n";
+
+	}
+	/*for (int i=0; i<Nx; i++)
 	{
 		for (int j=0; j<Ny; j++)
 		{
@@ -84,7 +96,8 @@ int main (int argc, char** argv)
 			file << convU << "," << convV << "," << difU << "," << difV << "\n";
 
 		}
-	}
+	}*/
+	
 
 	// Close the Part A verification file. The original verification loop above
 	// is intentionally preserved unchanged.

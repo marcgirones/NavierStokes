@@ -22,29 +22,29 @@ void Mesh::initialize (std::function<double(double,double)> init_cond)
 double Mesh::findxCenternode(int i) const { return m_Lex / 2.0 + m_Lex * i; }
 double Mesh::findyCenternode(int j) const { return m_Ley / 2.0 + m_Ley * j; }
 
-int Mesh::goeast (int i, int j){
+int Mesh::goeast (int i, int j) const{
 	return j*m_Nx + (i+1+m_Nx)%m_Nx;
 }
-int Mesh::goeast (int i){
+int Mesh::goeast (int i) const{
 	return (i/m_Nx)*m_Nx + (i+1)%m_Nx;
 }
 
-int Mesh::gowest (int i, int j){
+int Mesh::gowest (int i, int j) const{
 	return j*m_Nx + (i-1+m_Nx)%m_Nx;
 }
-int Mesh::gowest (int i){
+int Mesh::gowest (int i) const{
 	return (i/m_Nx)*m_Nx + (i-1+m_Nx)%m_Nx;
 }
-int Mesh::gonorth (int i, int j){
+int Mesh::gonorth (int i, int j) const{
 	return ((j+1)%m_Ny)*m_Nx + i;
 }
-int Mesh::gonorth (int i){
+int Mesh::gonorth (int i) const{
 	return i%m_Nx + (((i/m_Nx)+1)%m_Ny)*m_Nx;
 }
-int Mesh::gosouth (int i, int j){
+int Mesh::gosouth (int i, int j) const{
 	return ((j-1+m_Ny)%m_Ny)*m_Nx + i;
 }
-int Mesh::gosouth (int i){
+int Mesh::gosouth (int i) const{
 	return i%m_Nx + (((i/m_Nx)-1+m_Ny)%m_Ny)*m_Nx; 
 }
 
@@ -68,7 +68,7 @@ void Mesh::print_field() const {
         std::cout << "\n";
     }
 }
-double Mesh::getFieldValue (int i){
+double Mesh::getFieldValue (int i) const{
 	return m_field[i];
 }
 
@@ -87,7 +87,7 @@ double Umesh::findy(int j) const { return findyCenternode(j); }
 void Umesh::coord(int i, int j, double* x, double* y) const {
     *x = findx(i); *y = findy(j);
 }
-double Umesh::gradi (int ii){
+double Umesh::gradi (int ii) const{
 	return (getFieldValue(ii) + getFieldValue(goeast(ii)))/getLex();
 }
 
@@ -98,5 +98,6 @@ double Vmesh::findy(int j) const { return (1 + j) * getLey(); }
 void Vmesh::coord(int i, int j, double* x, double* y) const {
     *x = findx(i); *y = findy(j);
 }
-double Vmesh::gradi (int ii){
-	return (getFieldValue(ii) + getFieldValue(gonorth(ii)))/getLey();}
+double Vmesh::gradi (int ii) const{
+	return (getFieldValue(ii) + getFieldValue(gonorth(ii)))/getLey();
+}

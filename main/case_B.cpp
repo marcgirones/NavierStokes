@@ -60,26 +60,6 @@ int main (int argc, char** argv)
 
 
 	/*******************************************************
-		PART A CONVECTIVE AND DIFUSIVE TERM COMPUTATION
-	********************************************************/
-	double convU=0, convV=0, difU=0, difV=0;
-
-
-	for (int i=0; i<Nx; i++)
-	{
-		for (int j=0; j<Ny; j++)
-		{
-			// Compute convective and diffusive terms
-			convU = FVM::computeConvectiveU(i, j, u, v);
-			difU = FVM::computeDiffusiveU(i, j, u, nu);
-
-			convV = FVM::computeConvectiveV(i, j, u, v);
-			difV = FVM::computeDiffusiveV(i, j, u, v, nu);
-
-		}
-	}
-
-	/*******************************************************
 		PART B/C: PRESSURE-VELOCITY COUPLING AND TIME LOOP
 	*******************************************************/
 	Solver solver(Nx, Ny, Lx, Ly, nu, rho);
