@@ -160,7 +160,7 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax)
     
     double maxgrad =0;
     //auto start_correction = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < m_Nx; ++i) {
+    /*for (int i = 0; i < m_Nx; ++i) {
         for (int j = 0; j < m_Ny; ++j) {
             const std::size_t k = index(i, j);
             const int ip = (i + 1) % m_Nx;
@@ -168,16 +168,16 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax)
             u(i, j) = m_up[k] - (m_pseudoPressure[index(ip, j)] - m_pseudoPressure[k]) / m_dx;
             v(i, j) = m_vp[k] - (m_pseudoPressure[index(i, jp)] - m_pseudoPressure[k]) / m_dy;
             p(i, j) = (m_rho / m_dt) * m_pseudoPressure[k];
-	    double gradu = u.gradi(i);
-	    double gradv = v.gradi(i);
+	    double gradu = u.gradi(i+j*m_Nx);
+	    double gradv = v.gradi(i+j*m_Nx);
 	    double grad = std::abs(gradu+gradv);
 	    if(grad>maxgrad) maxgrad = grad;
    
 	}
-    }
+    }*/
 
 
-    /*for (int i = 0; i < m_Nx*m_Ny; ++i) {
+    for (int i = 0; i < m_Nx*m_Ny; ++i) {
 	u.setFieldValue(i, m_up[i] - (m_pseudoPressure[u.goeast(i)] - m_pseudoPressure[i]) / m_dx);
     	v.setFieldValue(i, m_vp[i] - (m_pseudoPressure[v.gonorth(i)] - m_pseudoPressure[i]) / m_dy);
         p.setFieldValue(i,(m_rho / m_dt) * m_pseudoPressure[i]);
@@ -185,7 +185,7 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax)
 	double gradv = v.gradi(i);
 	double grad = std::abs(gradu+gradv);
 	if(grad>maxgrad) maxgrad = grad;
-    }*/
+    }
 
     std::cout<<"gradient màxim de u^(n+1) "<<maxgrad<<"\n";
     //auto end_correction = std::chrono::high_resolution_clock::now();
