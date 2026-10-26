@@ -49,7 +49,7 @@ target_compile_options(nscore PRIVATE -Wall -Wextra)
 add_executable(case_A main/case_A.cpp)
 target_link_libraries(case_A PRIVATE nscore)
 
-add_executable(case_B main/case_A.cpp)
+add_executable(case_B main/case_B.cpp)
 target_link_libraries(case_B PRIVATE nscore)
 
 add_executable(case_C main/case_C.cpp)

@@ -63,13 +63,6 @@ int main (int argc, char** argv)
 		PART B/C: PRESSURE-VELOCITY COUPLING AND TIME LOOP
 	*******************************************************/
 	Solver solver(Nx, Ny, Lx, Ly, nu, rho);
-		
 	solver.step(u, v, p, 0.1);
 
-	double maxdiv=0;
-
-	for(int ii = 0; ii<Nx*Ny; ii++){
-		dudx = (u.field(ii) + u.field(goeast(ii))/(Nx/Lx);
-		dvdy = (v.field(ii) + v.field(gonorth(ii))/(Ny/Ly);
-	}
 }

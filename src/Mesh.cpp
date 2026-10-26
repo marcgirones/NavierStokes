@@ -71,6 +71,9 @@ void Mesh::print_field() const {
 double Mesh::getFieldValue (int i) const{
 	return m_field[i];
 }
+void Mesh::setFieldValue (int i, double val){
+	m_field[i] = val;
+}
 
 // Pmesh
 Pmesh::Pmesh(int Nx, int Ny, double Lx, double Ly) : Mesh(Nx, Ny, Lx, Ly) {}
@@ -88,7 +91,7 @@ void Umesh::coord(int i, int j, double* x, double* y) const {
     *x = findx(i); *y = findy(j);
 }
 double Umesh::gradi (int ii) const{
-	return (getFieldValue(ii) + getFieldValue(goeast(ii)))/getLex();
+	return (getFieldValue(ii) - getFieldValue(gowest(ii)))/getLex();
 }
 
 // Vmesh
@@ -99,5 +102,5 @@ void Vmesh::coord(int i, int j, double* x, double* y) const {
     *x = findx(i); *y = findy(j);
 }
 double Vmesh::gradi (int ii) const{
-	return (getFieldValue(ii) + getFieldValue(gonorth(ii)))/getLey();
+	return (getFieldValue(ii) - getFieldValue(gosouth(ii)))/getLey();
 }

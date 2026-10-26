@@ -174,7 +174,6 @@ main/case_A.o: main/case_A.cpp.o
 # target to build an object file
 main/case_A.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/main/case_A.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_B.dir/build.make CMakeFiles/case_B.dir/main/case_A.cpp.o
 .PHONY : main/case_A.cpp.o
 
 main/case_A.i: main/case_A.cpp.i
@@ -183,7 +182,6 @@ main/case_A.i: main/case_A.cpp.i
 # target to preprocess a source file
 main/case_A.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/main/case_A.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_B.dir/build.make CMakeFiles/case_B.dir/main/case_A.cpp.i
 .PHONY : main/case_A.cpp.i
 
 main/case_A.s: main/case_A.cpp.s
@@ -192,8 +190,31 @@ main/case_A.s: main/case_A.cpp.s
 # target to generate assembly for a file
 main/case_A.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_A.dir/build.make CMakeFiles/case_A.dir/main/case_A.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_B.dir/build.make CMakeFiles/case_B.dir/main/case_A.cpp.s
 .PHONY : main/case_A.cpp.s
+
+main/case_B.o: main/case_B.cpp.o
+.PHONY : main/case_B.o
+
+# target to build an object file
+main/case_B.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_B.dir/build.make CMakeFiles/case_B.dir/main/case_B.cpp.o
+.PHONY : main/case_B.cpp.o
+
+main/case_B.i: main/case_B.cpp.i
+.PHONY : main/case_B.i
+
+# target to preprocess a source file
+main/case_B.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_B.dir/build.make CMakeFiles/case_B.dir/main/case_B.cpp.i
+.PHONY : main/case_B.cpp.i
+
+main/case_B.s: main/case_B.cpp.s
+.PHONY : main/case_B.s
+
+# target to generate assembly for a file
+main/case_B.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_B.dir/build.make CMakeFiles/case_B.dir/main/case_B.cpp.s
+.PHONY : main/case_B.cpp.s
 
 main/case_C.o: main/case_C.cpp.o
 .PHONY : main/case_C.o
@@ -306,6 +327,9 @@ help:
 	@echo "... main/case_A.o"
 	@echo "... main/case_A.i"
 	@echo "... main/case_A.s"
+	@echo "... main/case_B.o"
+	@echo "... main/case_B.i"
+	@echo "... main/case_B.s"
 	@echo "... main/case_C.o"
 	@echo "... main/case_C.i"
 	@echo "... main/case_C.s"

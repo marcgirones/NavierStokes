@@ -39,7 +39,8 @@ public:
     int getNy() const { return m_Ny; }
     double getLex() const { return m_Lex; }
     double getLey() const { return m_Ley; }
-	double getFieldValue(int i) const;
+    double getFieldValue(int i) const;
+    void setFieldValue(int i, double val);
 	double getFieldValue(int i, int j) const;
 
 	void initialize(std::function<double(double,double)> init_cond);

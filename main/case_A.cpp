@@ -65,7 +65,7 @@ int main (int argc, char** argv)
 		return 1;
 	}
 	file << std::setprecision(17);
-
+	std::cout<<"hola"<<"\n";
 	// Write header row
 	file << "convU,convV,difU,difV\n";
 	for (int i=0; i<Nx*Ny; i++)
