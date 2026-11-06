@@ -94,7 +94,7 @@ def main():
     ap.add_argument("--exe", default="../case_C", help="path to compiled C++ solver")
     ap.add_argument("--sizes", type=int, nargs="+", default=[16, 32, 64, 128, 256, 512],
                     help="mesh sizes N (square N x N grids)")
-    ap.add_argument("--time", type=float, default=1, help="target final time")
+    ap.add_argument("--time", type=float, default=0.1, help="target final time")
     ap.add_argument("--nu", type=float, default=NU_DEFAULT, help="kinematic viscosity")
     ap.add_argument("--rho", type=float, default=RHO_DEFAULT, help="density")
     ap.add_argument("--workdir", default="../results/validation_runs", help="output directory")

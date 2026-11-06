@@ -45,24 +45,51 @@ int main (int argc, char** argv)
 	u.initialize([](double x, double y)
 	{
 		double a = cos(2*M_PI*x)*sin(2*M_PI*y);
-		return a;
-		//if((a>0 && a>1e-10) || (a<0 && a<-1e-10)) return a;
-		//else return 0.0;
+		//double a = cos(x);
+		return 0.0;
 	});
 	v.initialize([](double x, double y)
 	{
 		double a = -sin(2*M_PI*x)*cos(2*M_PI*y);
-		return a;
-		//if((a>0 && a>1e-10) || (a<0 && a<-1e-10)) return a;
-		//else return 0.0;
+		//double a = sin(y);
+		return 0.0;
 	});
 
-
+	u.setFieldValue(Nx*Ny/2+50, 100*1.0/Nx);
 
 	/*******************************************************
-		PART B/C: PRESSURE-VELOCITY COUPLING AND TIME LOOP
+		PART B: PRESSURE-VELOCITY COUPLING AND TIME LOOP
 	*******************************************************/
-	Solver solver(Nx, Ny, Lx, Ly, nu, rho);
-	solver.step(u, v, p, 0.1);
+	std::ofstream file1("results/case_B_results/upFieldDivergence.csv");
+	std::ofstream file2("results/case_B_results/unFieldDivergence.csv");
 
+
+	Solver solver(Nx, Ny, Lx, Ly, nu, rho);
+
+	double maxgrad = 0, totaldiv=0;
+
+	for(int i=0; i<Nx*Ny; i++){
+		double gradu = u.gradi(i);
+		double gradv = v.gradi(i);
+		double grad = std::abs(gradu+gradv);
+		totaldiv+=gradu+gradv;
+		if(grad>maxgrad) maxgrad = grad;
+		if(i%Nx==Nx-1) file1<<gradu+gradv<<"\n";
+		else file1<<gradu+gradv<<",";
+	}
+	std::cout<<"maxdiv (up) "<<maxgrad<<" Total divergence of the field "<<totaldiv<<"\n";
+	solver.solvePoissonFFT(u, v, p);
+	maxgrad = 0; totaldiv = 0;
+	for(int i=0; i<Nx*Ny; i++){
+		double gradu = u.gradi(i);
+		double gradv = v.gradi(i);
+		double grad = std::abs(gradu+gradv);
+		totaldiv+= gradu+gradv;
+		if(grad>maxgrad) maxgrad = grad;
+		if(i%Nx==Nx-1) file2<<gradu+gradv<<"\n";
+		else file2<<gradu+gradv<<",";
+
+	}
+	std::cout<<"maxdiv (u^n+1) "<<maxgrad<<" Total divergence of the field "<<totaldiv<<"\n";
+	file1.close(); file2.close();
 }

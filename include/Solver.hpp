@@ -19,6 +19,8 @@ public:
     // One complete time step: AB2 predictor -> Poisson solve -> correction.
     void step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax);
 
+    void solvePoissonFFT(Umesh& u, Vmesh& v, Pmesh& p);
+
     int getStep() const { return m_step; }
     double getTime() const { return m_time; }
     double getdt() const { return m_dt; }
@@ -44,7 +46,7 @@ private:
     void* m_inversePlan = nullptr;
 
     std::size_t index(int i, int j) const;
-    void solvePoissonFFT(const Umesh& u, const Vmesh& v);
+    void solvePoissonFFT();
 };
 
 #endif

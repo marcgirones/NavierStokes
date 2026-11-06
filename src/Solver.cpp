@@ -53,7 +53,7 @@ std::size_t Solver::index(int i, int j) const
     return static_cast<std::size_t>(j) * m_Nx + i;
 }
 
-void Solver::solvePoissonFFT(const Umesh& u, const Vmesh& v)
+void Solver::solvePoissonFFT()
 {
     auto* rhs = static_cast<fftw_complex*>(m_rhs);
     auto* rhsHat = static_cast<fftw_complex*>(m_rhsHat);
@@ -67,6 +67,7 @@ void Solver::solvePoissonFFT(const Umesh& u, const Vmesh& v)
             rhs[index(i, j)][1] = 0.0;
         }
     }
+
 
     fftw_execute(static_cast<fftw_plan>(m_forwardPlan));
 
@@ -95,10 +96,57 @@ void Solver::solvePoissonFFT(const Umesh& u, const Vmesh& v)
         for (int i = 0; i < m_Nx; ++i)
             m_pseudoPressure[index(i, j)] = rhs[index(i, j)][0] * normalization;
 
-    (void)u;
-    (void)v;
 }
 
+// Override function solvePoissonFFT() to make the valoration of the case B with a given arbitrari u and v fields
+
+void Solver::solvePoissonFFT(Umesh& u, Vmesh& v, Pmesh& p)
+{
+    auto* rhs = static_cast<fftw_complex*>(m_rhs);
+    auto* rhsHat = static_cast<fftw_complex*>(m_rhsHat);
+
+    // Discrete divergence at pressure-cell centres. The mesh is periodic.
+
+    for (int i = 0; i< m_Nx*m_Ny; i++){
+	const double div = (u.getFieldValue(i) - u.getFieldValue(u.gowest(i)))/m_dx + (v.getFieldValue(i) - v.getFieldValue(v.gosouth(i)))/m_dy;
+
+	rhs[i][0] = div;
+	rhs[i][1] = 0.0;
+    }
+
+    fftw_execute(static_cast<fftw_plan>(m_forwardPlan));
+
+    // Invert the eigenvalues of the same second-order discrete Laplacian.
+    // The (kx,ky)=(0,0) mode is singular: set mean pseudopressure to zero.
+    for (int ky = 0; ky < m_Ny; ++ky) {
+        const double sy = std::sin(M_PI * ky / m_Ny);
+        for (int kx = 0; kx < m_Nx; ++kx) {
+            const std::size_t k = index(kx, ky);
+            if (kx == 0 && ky == 0) {
+                rhsHat[k][0] = 0.0;
+                rhsHat[k][1] = 0.0;
+                continue;
+            }
+            const double sx = std::sin(M_PI * kx / m_Nx);
+            const double lambda = -4.0 * sx * sx / (m_dx * m_dx)
+                                  -4.0 * sy * sy / (m_dy * m_dy);
+            rhsHat[k][0] /= lambda;
+            rhsHat[k][1] /= lambda;
+        }
+    }
+
+    fftw_execute(static_cast<fftw_plan>(m_inversePlan));
+    const double normalization = 1.0 / (static_cast<double>(m_Nx) * m_Ny);
+    for (int j = 0; j < m_Ny; ++j)
+        for (int i = 0; i < m_Nx; ++i)
+            m_pseudoPressure[index(i, j)] = rhs[index(i, j)][0] * normalization;
+    for (int i = 0; i < m_Nx*m_Ny; ++i) {
+	u.setFieldValue(i, u.getFieldValue(i) - (m_pseudoPressure[u.goeast(i)] - m_pseudoPressure[i]) / m_dx);
+    	v.setFieldValue(i, v.getFieldValue(i) - (m_pseudoPressure[v.gonorth(i)] - m_pseudoPressure[i]) / m_dy);
+        p.setFieldValue(i,(m_rho / m_dt) * m_pseudoPressure[i]);
+    }
+
+}
 void Solver::step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax)
 {
     //auto start_step = std::chrono::high_resolution_clock::now();
@@ -111,9 +159,7 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax)
     const double v_max = v.max_val();
     const double velocity_max = std::max(u_max, v_max);
 
-    m_dtc = (velocity_max > 0.0)
-          ? m_dx / velocity_max
-          : m_dtd;
+    m_dtc = (velocity_max > 0.0)? m_dx / velocity_max : m_dtd;
 
     m_dt = 0.1 * std::min(m_dtd, m_dtc);
 
@@ -152,13 +198,12 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax)
     // Solve Laplacian(pseudoPressure) = div(predictor velocity).
     //auto start_p = std::chrono::high_resolution_clock::now();
 
-    solvePoissonFFT(u, v);
+    solvePoissonFFT();
 
     //auto end_p = std::chrono::high_resolution_clock::now();
     // LOOP 2: correct velocities and recover physical pressure p = rho/dt * p_tilde.
     // u(i,j) lies between pressure cells i and i+1; v(i,j) between j and j+1.
     
-    double maxgrad =0;
     //auto start_correction = std::chrono::high_resolution_clock::now();
     /*for (int i = 0; i < m_Nx; ++i) {
         for (int j = 0; j < m_Ny; ++j) {
@@ -181,13 +226,8 @@ void Solver::step(Umesh& u, Vmesh& v, Pmesh& p, double dtMax)
 	u.setFieldValue(i, m_up[i] - (m_pseudoPressure[u.goeast(i)] - m_pseudoPressure[i]) / m_dx);
     	v.setFieldValue(i, m_vp[i] - (m_pseudoPressure[v.gonorth(i)] - m_pseudoPressure[i]) / m_dy);
         p.setFieldValue(i,(m_rho / m_dt) * m_pseudoPressure[i]);
-	double gradu = u.gradi(i);
-	double gradv = v.gradi(i);
-	double grad = std::abs(gradu+gradv);
-	if(grad>maxgrad) maxgrad = grad;
     }
 
-    std::cout<<"gradient màxim de u^(n+1) "<<maxgrad<<"\n";
     //auto end_correction = std::chrono::high_resolution_clock::now();
     // Keep R^n for the next AB2 step. Initial previous R is zero (R^{-1}=0).
 
