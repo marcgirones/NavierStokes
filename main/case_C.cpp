@@ -5,6 +5,7 @@
 #include <iomanip>     // setprecision
 #include <string>      // to_string
 #include <algorithm>   // max
+#include <vector>
 #include "Mesh.hpp"
 #include "NavierStokesTerms.hpp"
 #include "Solver.hpp"
@@ -20,7 +21,11 @@ int main (int argc, char** argv)
 
 	// Simulation parameters: N, final time, viscosity, time step
 	const double tFinal = (argc > 2) ? std::atof(argv[2]) : 0.01;
-	const double nu = (argc > 3) ? std::atof(argv[3]) : 1.51e-5;
+	// Re = U*L/nu = 100 with U = 1 (max |u| of the Taylor-Green vortex) and L = 1
+	const double nu = (argc > 3) ? std::atof(argv[3]) : 0.01;
+	// Save a snapshot every 'saveEvery' steps (1 = every time step).
+	// The initial state and the final state are always saved.
+	const int saveEvery = (argc > 4) ? std::max(1, std::atoi(argv[4])) : 1;
 	const double rho = 1.0;
 
 	if (Nx < 1 || tFinal <= 0.0 || nu < 0.0) {
@@ -81,15 +86,53 @@ int main (int argc, char** argv)
 		PART B/C: PRESSURE-VELOCITY COUPLING AND TIME LOOP
 	*******************************************************/
 	Solver solver(Nx, Ny, Lx, Ly, nu, rho);
+
+	/*******************************************************
+		HISTORY OUTPUT (all states, one block per saved step)
+		history_u.bin / history_v.bin / history_p.bin:
+		  raw float64, each snapshot = Ny*Nx values, row-major
+		  (index j*Nx+i), snapshots stored consecutively.
+		history_times.csv: step,t,dt for every snapshot.
+	********************************************************/
+	std::ofstream hU("history_u.bin", std::ios::binary);
+	std::ofstream hV("history_v.bin", std::ios::binary);
+	std::ofstream hP("history_p.bin", std::ios::binary);
+	std::ofstream hT("history_times.csv");
+	if (!hU || !hV || !hP || !hT) {
+		std::cerr << "Error: could not open history output files.\n";
+		return 1;
+	}
+	hT << std::setprecision(17) << "step,t,dt\n";
+
+	std::vector<double> buf(static_cast<std::size_t>(Nx) * Ny);
+	auto dump = [&](std::ofstream& f, const Mesh& m) {
+		for (int j = 0; j < Ny; ++j)
+			for (int i = 0; i < Nx; ++i)
+				buf[static_cast<std::size_t>(j) * Nx + i] = m(i, j);
+		f.write(reinterpret_cast<const char*>(buf.data()),
+		        static_cast<std::streamsize>(buf.size() * sizeof(double)));
+	};
+	auto saveSnapshot = [&]() {
+		dump(hU, u); dump(hV, v); dump(hP, p);
+		hT << solver.getStep() << "," << solver.getTime() << ","
+		   << solver.getdt() << "\n";
+	};
+
+	saveSnapshot();   // initial state, t = 0
+
 	while (solver.getTime() < tFinal) {
-		
+
 		const double dtMax = tFinal - solver.getTime();
 		solver.step(u, v, p, dtMax);
 
 		std::cout << "Completed step " << solver.getStep()
 				<< ", dt = " << solver.getdt()
 				<< ", t = " << solver.getTime() << "\n";
+
+		if (solver.getStep() % saveEvery == 0 || solver.getTime() >= tFinal)
+			saveSnapshot();
 	}
+	hU.close(); hV.close(); hP.close(); hT.close();
 
 	// Final fields for inspection / verification.
 	// Original filenames are preserved.
