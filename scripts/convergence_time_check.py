@@ -103,14 +103,14 @@ def node_index(n, x, y, stagger):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--exe", default="../case_C", help="path to compiled C++ solver")
+    ap.add_argument("--exe", default="case_C", help="path to compiled C++ solver")
     ap.add_argument("--sizes", type=int, nargs="+", default=[8, 16, 32, 64, 128],
                     help="mesh sizes N (square N x N grids)")
     ap.add_argument("--time", type=float, default=12.0, help="target final time")
     ap.add_argument("--nu", type=float, default=NU_DEFAULT, help="kinematic viscosity")
     ap.add_argument("--rho", type=float, default=RHO_DEFAULT, help="density")
-    ap.add_argument("--workdir", default="../results/validation_runs", help="output directory")
-    ap.add_argument("--out", default="../results/validation_results", help="plots/output folder")
+    ap.add_argument("--workdir", default="results/validation_runs", help="output directory")
+    ap.add_argument("--out", default="results/validation_results", help="plots/output folder")
     ap.add_argument("--save-every", type=int, default=1,
                     help="solver saves a snapshot every this many steps (1 = every step; "
                          "raise it for large N to save disk space)")
