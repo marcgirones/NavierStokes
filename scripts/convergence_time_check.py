@@ -104,7 +104,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--exe", default="case_C", help="path to compiled C++ solver")
-    ap.add_argument("--sizes", type=int, nargs="+", default=[8, 16, 32, 64, 128],
+    ap.add_argument("--sizes", type=int, nargs="+", default=[8, 16, 32, 64],
                     help="mesh sizes N (square N x N grids)")
     ap.add_argument("--time", type=float, default=12.0, help="target final time")
     ap.add_argument("--nu", type=float, default=NU_DEFAULT, help="kinematic viscosity")

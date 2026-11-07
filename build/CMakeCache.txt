@@ -14,6 +14,16 @@
 # EXTERNAL cache entries
 ########################
 
+//Argumentos extra para valoracio_c_d.py (separados por ;)
+CASEA_ARGS:STRING=
+
+//Argumentos del solver case_B (N tFinal nu, separados por ;)
+CASEB_ARGS:STRING=
+
+//Argumentos extra para convergence_time_check.py (separados por
+// ;)
+CASEC_ARGS:STRING=
+
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=/usr/bin/addr2line
 
@@ -351,8 +361,21 @@ CMAKE_TAPI-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//Details about finding Python3
+FIND_PACKAGE_MESSAGE_DETAILS_Python3:INTERNAL=[/home/marcg/upc/.venv/bin/python3][found components: Interpreter ][v3.14.4()]
 //ADVANCED property for variable: PKG_CONFIG_ARGN
 PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
 PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
+//Compiler reason failure
+_Python3_Compiler_REASON_FAILURE:INTERNAL=
+//Development reason failure
+_Python3_Development_REASON_FAILURE:INTERNAL=
+//Path to a program.
+_Python3_EXECUTABLE:INTERNAL=/home/marcg/upc/.venv/bin/python3
+//Python3 Properties
+_Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;14;4;64;32;<none>;cpython-314-x86_64-linux-gnu;abi3;/usr/lib/python3.14;/home/marcg/upc/.venv/lib/python3.14;/home/marcg/upc/.venv/lib/python3.14/site-packages;/home/marcg/upc/.venv/lib/python3.14/site-packages
+_Python3_INTERPRETER_SIGNATURE:INTERNAL=61be2d3bbe7edde155fec849103d7b96
+//NumPy reason failure
+_Python3_NumPy_REASON_FAILURE:INTERNAL=
 

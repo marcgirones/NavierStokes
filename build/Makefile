@@ -168,6 +168,58 @@ case_C/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/case_C.dir/build.make CMakeFiles/case_C.dir/build
 .PHONY : case_C/fast
 
+#=============================================================================
+# Target rules for targets named caseA
+
+# Build rule for target.
+caseA: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 caseA
+.PHONY : caseA
+
+# fast build rule for target.
+caseA/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/caseA.dir/build.make CMakeFiles/caseA.dir/build
+.PHONY : caseA/fast
+
+#=============================================================================
+# Target rules for targets named caseB
+
+# Build rule for target.
+caseB: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 caseB
+.PHONY : caseB
+
+# fast build rule for target.
+caseB/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/caseB.dir/build.make CMakeFiles/caseB.dir/build
+.PHONY : caseB/fast
+
+#=============================================================================
+# Target rules for targets named caseC
+
+# Build rule for target.
+caseC: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 caseC
+.PHONY : caseC
+
+# fast build rule for target.
+caseC/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/caseC.dir/build.make CMakeFiles/caseC.dir/build
+.PHONY : caseC/fast
+
+#=============================================================================
+# Target rules for targets named caseAll
+
+# Build rule for target.
+caseAll: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 caseAll
+.PHONY : caseAll
+
+# fast build rule for target.
+caseAll/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/caseAll.dir/build.make CMakeFiles/caseAll.dir/build
+.PHONY : caseAll/fast
+
 main/case_A.o: main/case_A.cpp.o
 .PHONY : main/case_A.o
 
@@ -320,6 +372,10 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... caseA"
+	@echo "... caseAll"
+	@echo "... caseB"
+	@echo "... caseC"
 	@echo "... case_A"
 	@echo "... case_B"
 	@echo "... case_C"

@@ -23,6 +23,8 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-4.2/Modules/FindPackageHandleStandardArgs.cmake"
   "/usr/share/cmake-4.2/Modules/FindPackageMessage.cmake"
   "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake"
+  "/usr/share/cmake-4.2/Modules/FindPython/Support.cmake"
+  "/usr/share/cmake-4.2/Modules/FindPython3.cmake"
   "/usr/share/cmake-4.2/Modules/Internal/CMakeCXXLinkerInformation.cmake"
   "/usr/share/cmake-4.2/Modules/Internal/CMakeCommonLinkerInformation.cmake"
   "/usr/share/cmake-4.2/Modules/Linker/GNU-CXX.cmake"
@@ -54,4 +56,8 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/case_A.dir/DependInfo.cmake"
   "CMakeFiles/case_B.dir/DependInfo.cmake"
   "CMakeFiles/case_C.dir/DependInfo.cmake"
+  "CMakeFiles/caseA.dir/DependInfo.cmake"
+  "CMakeFiles/caseB.dir/DependInfo.cmake"
+  "CMakeFiles/caseC.dir/DependInfo.cmake"
+  "CMakeFiles/caseAll.dir/DependInfo.cmake"
   )
