@@ -33,7 +33,7 @@ int main (int argc, char** argv)
 	Vmesh v { Nx, Ny, Lx, Ly};
 
 	/************************************
-		PROVES SET FIELD
+		Initialize the field
 	************************************/
 
 	p.initialize([](double x, double y)
@@ -44,13 +44,13 @@ int main (int argc, char** argv)
 
 	u.initialize([](double x, double y)
 	{
-		double a = cos(2*M_PI*x)*sin(2*M_PI*y);
+		//double a = cos(2*M_PI*x)*sin(2*M_PI*y);
 		//double a = cos(x);
 		return 0.0;
 	});
 	v.initialize([](double x, double y)
 	{
-		double a = -sin(2*M_PI*x)*cos(2*M_PI*y);
+		//double a = -sin(2*M_PI*x)*cos(2*M_PI*y);
 		//double a = sin(y);
 		return 0.0;
 	});
@@ -66,30 +66,41 @@ int main (int argc, char** argv)
 
 	Solver solver(Nx, Ny, Lx, Ly, nu, rho);
 
-	double maxgrad = 0, totaldiv=0;
+	double maxdiv = 0, totaldiv=0;
 
 	for(int i=0; i<Nx*Ny; i++){
-		double gradu = u.gradi(i);
-		double gradv = v.gradi(i);
-		double grad = std::abs(gradu+gradv);
-		totaldiv+=gradu+gradv;
-		if(grad>maxgrad) maxgrad = grad;
-		if(i%Nx==Nx-1) file1<<gradu+gradv<<"\n";
-		else file1<<gradu+gradv<<",";
+
+		//Check the initial local and global divergence of the velocity field 
+
+		double divu = u.gradi(i);
+		double divv = v.gradi(i);
+		double div = std::abs(divu+divv);
+		totaldiv+=divu+divv;
+		if(div>maxdiv) maxdiv = div;
+		if(i%Nx==Nx-1) file1<<divu+divv<<"\n";
+		else file1<<divu+divv<<",";
 	}
-	std::cout<<"maxdiv (up) "<<maxgrad<<" Total divergence of the field "<<totaldiv<<"\n";
+	std::cout<<"maxdiv (up) "<<maxdiv<<" Total divergence of the field "<<totaldiv<<"\n";
+
+	//Solve the poisson probelm
+
 	solver.solvePoissonFFT(u, v, p);
-	maxgrad = 0; totaldiv = 0;
+
+
+	maxdiv = 0; totaldiv = 0;
 	for(int i=0; i<Nx*Ny; i++){
-		double gradu = u.gradi(i);
-		double gradv = v.gradi(i);
-		double grad = std::abs(gradu+gradv);
-		totaldiv+= gradu+gradv;
-		if(grad>maxgrad) maxgrad = grad;
-		if(i%Nx==Nx-1) file2<<gradu+gradv<<"\n";
-		else file2<<gradu+gradv<<",";
+		
+		//Check the local and global divergence of the u^(n+1) velocity field
+
+		double divu = u.gradi(i);
+		double divv = v.gradi(i);
+		double div = std::abs(divu+divv);
+		totaldiv+= divu+divv;
+		if(div>maxdiv) maxdiv = div;
+		if(i%Nx==Nx-1) file2<<divu+divv<<"\n";
+		else file2<<divu+divv<<",";
 
 	}
-	std::cout<<"maxdiv (u^n+1) "<<maxgrad<<" Total divergence of the field "<<totaldiv<<"\n";
+	std::cout<<"maxdiv (u^n+1) "<<maxdiv<<" Total divergence of the field "<<totaldiv<<"\n";
 	file1.close(); file2.close();
 }

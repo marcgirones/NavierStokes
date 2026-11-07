@@ -32,7 +32,7 @@ int main (int argc, char** argv)
 	Vmesh v { Nx, Ny, Lx, Ly};
 
 	/************************************
-		PROVES SET FIELD
+		Initialize the field
 	************************************/
 
 	p.initialize([](double x, double y)
@@ -65,7 +65,6 @@ int main (int argc, char** argv)
 		return 1;
 	}
 	file << std::setprecision(17);
-	std::cout<<"hola"<<"\n";
 	// Write header row
 	file << "convU,convV,difU,difV\n";
 	for (int i=0; i<Nx*Ny; i++)
@@ -81,24 +80,7 @@ int main (int argc, char** argv)
 		file << convU << "," << convV << "," << difU << "," << difV << "\n";
 
 	}
-	/*for (int i=0; i<Nx; i++)
-	{
-		for (int j=0; j<Ny; j++)
-		{
-			// Compute convective and diffusive terms
-			convU = FVM::computeConvectiveU(i, j, u, v);
-			difU = FVM::computeDiffusiveU(i, j, u, nu);
-
-			convV = FVM::computeConvectiveV(i, j, u, v);
-			difV = FVM::computeDiffusiveV(i, j, u, v, nu);
-
-			// Write row values separated by commas
-			file << convU << "," << convV << "," << difU << "," << difV << "\n";
-
-		}
-	}*/
 	
-
 	// Close the Part A verification file. The original verification loop above
 	// is intentionally preserved unchanged.
 	file.close();

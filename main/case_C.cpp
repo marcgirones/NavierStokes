@@ -67,7 +67,7 @@ int main (int argc, char** argv)
 
 
 
-	for (int i=0; i<Nx; i++)
+	/*for (int i=0; i<Nx; i++)
 	{
 		for (int j=0; j<Ny; j++)
 		{
@@ -79,8 +79,17 @@ int main (int argc, char** argv)
 			difV = FVM::computeDiffusiveV(i, j, u, v, nu);
 
 		}
-	}
+	}*/
+	for (int i=0; i<Nx*Ny; i++)
+	{
+		// Compute convective and diffusive terms
+		convU = FVM::computeConvectiveU(i, u, v);
+		difU = FVM::computeDiffusiveU(i, u, nu);
 
+		convV = FVM::computeConvectiveV(i, u, v);
+		difV = FVM::computeDiffusiveV(i, u, v, nu);
+
+	}
 
 	/*******************************************************
 		PART B/C: PRESSURE-VELOCITY COUPLING AND TIME LOOP
@@ -135,7 +144,6 @@ int main (int argc, char** argv)
 	hU.close(); hV.close(); hP.close(); hT.close();
 
 	// Final fields for inspection / verification.
-	// Original filenames are preserved.
 	std::ofstream pressureFile("pressure_final.csv");
 	std::ofstream uFile("u_final.csv");
 	std::ofstream vFile("v_final.csv");

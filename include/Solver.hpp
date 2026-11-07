@@ -37,7 +37,8 @@ private:
 
     // Predictor velocities and pseudopressure are stored separately so that
     // updating one cell never changes data needed by another cell.
-    std::vector<double> m_up, m_vp, m_pseudoPressure;
+    //std::vector<double> m_up, m_vp, m_pseudoPressure;
+    Umesh m_up; Vmesh m_vp; Pmesh m_pseudoPressure; 
 
     // FFTW resources are hidden from the header using void pointers.
     void* m_rhs = nullptr;
