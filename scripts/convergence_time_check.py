@@ -16,7 +16,6 @@ Default viscosity gives Re = U*L/nu = 100 (U = 1, L = 1  ->  nu = 0.01).
 Executable interface for case_C: case_C N tFinal nu [saveEvery]
 """
 import argparse
-import re
 import subprocess
 import time as clock
 from pathlib import Path
@@ -28,7 +27,9 @@ L = 1.0
 RHO_DEFAULT = 1.0
 RE_DEFAULT = 100.0
 NU_DEFAULT = 1.0 * L / RE_DEFAULT   # Re = U L / nu = 100
-
+ROOT = Path(__file__).resolve().parent.parent
+# case_C writes to results/case_C_run/N<N> (relative to its working directory = ROOT)
+RUN_DIR = ROOT / "results" / "case_C_run"
 
 def exact_fields(n, t, nu, rho=RHO_DEFAULT):
     """Return exact u,v,p sampled on the staggered U/V and cell-centred P grids."""
@@ -46,21 +47,22 @@ def exact_fields(n, t, nu, rho=RHO_DEFAULT):
     return u, v, p
 
 
-def run_case(exe, n, t_final, nu, case_dir, save_every=1):
-    case_dir.mkdir(parents=True, exist_ok=True)
-
-    # case_C expects: N, tFinal, nu, [saveEvery].
-    cmd = [str(exe.resolve()), str(n), f"{t_final:.17g}", f"{nu:.17g}", str(save_every)]
-    result = subprocess.run(cmd, cwd=case_dir, capture_output=True, text=True)
+def run_case(exe, n, t_final, nu, save_every=1):
+    # case_C expects: N, tFinal, nu, [saveEvery]. It writes its files to
+    # <cwd>/results/case_C_run/N<N>, so it is run from the project root.
+    command = [str(exe.resolve()), str(n), f"{t_final:.17g}", f"{nu:.17g}", str(save_every)]
+    result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
 
     if result.returncode:
         raise RuntimeError(
-            f"Solver failed for N={n}.\nCommand: {' '.join(cmd)}\n"
+            f"Solver failed for N={n}.\nCommand: {' '.join(command)}\n"
             f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
         )
 
+    out_dir = RUN_DIR / f"N{n}"
+
     # Snapshot times written by the solver: columns step, t, dt.
-    times_path = case_dir / "history_times.csv"
+    times_path = out_dir / "history_times.csv"
     if not times_path.exists():
         raise FileNotFoundError(f"Solver did not create {times_path}")
     meta = np.loadtxt(times_path, delimiter=",", skiprows=1, ndmin=2)
@@ -71,7 +73,7 @@ def run_case(exe, n, t_final, nu, case_dir, save_every=1):
     hist = {}
     for key, name in (("u", "history_u.bin"), ("v", "history_v.bin"),
                       ("p", "history_p.bin")):
-        path = case_dir / name
+        path = out_dir / name
         if not path.exists():
             raise FileNotFoundError(f"Solver did not create {path}")
         if path.stat().st_size != ns * n * n * 8:
@@ -103,14 +105,13 @@ def node_index(n, x, y, stagger):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--exe", default="case_C", help="path to compiled C++ solver")
+    ap.add_argument("--exe", default=str(ROOT / "case_C"), help="path to compiled C++ solver")
     ap.add_argument("--sizes", type=int, nargs="+", default=[8, 16, 32, 64],
                     help="mesh sizes N (square N x N grids)")
     ap.add_argument("--time", type=float, default=12.0, help="target final time")
     ap.add_argument("--nu", type=float, default=NU_DEFAULT, help="kinematic viscosity")
     ap.add_argument("--rho", type=float, default=RHO_DEFAULT, help="density")
-    ap.add_argument("--workdir", default="results/validation_runs", help="output directory")
-    ap.add_argument("--out", default="results/validation_results", help="plots/output folder")
+    ap.add_argument("--out", default=str(ROOT / "results" / "case_C_results"), help="plots/output folder")
     ap.add_argument("--save-every", type=int, default=1,
                     help="solver saves a snapshot every this many steps (1 = every step; "
                          "raise it for large N to save disk space)")
@@ -136,7 +137,6 @@ def main():
     if not exe.exists():
         ap.error(f"Executable not found: {exe}. Compile the C++ solver first.")
 
-    workdir = Path(args.workdir).expanduser().resolve()
     outdir = Path(args.out).expanduser().resolve()
     outdir.mkdir(parents=True, exist_ok=True)
 
@@ -155,8 +155,7 @@ def main():
             jv, iv = node_index(n, *args.v_node, "v")
 
         start = clock.perf_counter()
-        t, snap, _ = run_case(exe, n, args.time, args.nu,
-                              workdir / f"N{n}", args.save_every)
+        t, snap, _ = run_case(exe, n, args.time, args.nu, args.save_every)
         elapsed = clock.perf_counter() - start
         ns = len(t)
         print(f"  Time computing: {elapsed:.2f} s; {ns} snapshots saved")

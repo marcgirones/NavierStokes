@@ -48,7 +48,8 @@ def draw(ax, div, st, title, Lx, Ly):
 
 
 def main():
-    folder = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("results/case_B_results")
+    folder = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("results/case_B_run")
+    out_folder = Path("results/case_B_results")
     Lx = float(sys.argv[2]) if len(sys.argv) > 2 else 1.0
     Ly = float(sys.argv[3]) if len(sys.argv) > 3 else 1.0
 
@@ -66,7 +67,7 @@ def main():
     draw(axs[1], div_un, st_un, r"Field at $n+1$ (after projection)", Lx, Ly)
     fig.suptitle(f"Local divergence of the velocity field  ({Nx}×{Ny} mesh)")
     fig.tight_layout()
-    fig.savefig(folder / "divergence_check.png", dpi=200)
+    fig.savefig(out_folder / "divergence_check.png", dpi=200)
 
     print(f"Before : total = {st_up['total']:.3e}, max|div| = {st_up['max']:.3e}")
     print(f"After  : total = {st_un['total']:.3e}, max|div| = {st_un['max']:.3e}")

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 #include <cmath>
 #include <fstream>
 #include <cstdlib>     // atoi
@@ -18,7 +19,7 @@ int main (int argc, char** argv)
 {
 	const int Nx = (argc>1) ? std::atoi(argv[1]) : 100; //default value N = 100
 	const int Ny = Nx;
-
+	
 	// Simulation parameters: N, final time, viscosity, time step
 	const double tFinal = (argc > 2) ? std::atof(argv[2]) : 0.01;
 	// Re = U*L/nu = 100 with U = 1 (max |u| of the Taylor-Green vortex) and L = 1
@@ -32,6 +33,11 @@ int main (int argc, char** argv)
 		std::cerr << "Error: N and dt/tFinal must be positive, and nu must be non-negative.\n";
 		return 1;
 	}
+
+	// Output folder results/case_C_run/N<N> (relative to the folder the program is
+	// run from). The solver creates it, with all missing parent folders.
+	const std::filesystem::path outDir = std::filesystem::path("results") / "case_C_run" / ("N" + std::to_string(Nx));
+	std::filesystem::create_directories(outDir);
 
 	Pmesh p { Nx, Ny, Lx, Ly};
 	Umesh u { Nx, Ny, Lx, Ly};
@@ -88,10 +94,10 @@ int main (int argc, char** argv)
 		  (index j*Nx+i), snapshots stored consecutively.
 		history_times.csv: step,t,dt for every snapshot.
 	********************************************************/
-	std::ofstream hU("history_u.bin", std::ios::binary);
-	std::ofstream hV("history_v.bin", std::ios::binary);
-	std::ofstream hP("history_p.bin", std::ios::binary);
-	std::ofstream hT("history_times.csv");
+	std::ofstream hU(outDir / "history_u.bin", std::ios::binary);
+	std::ofstream hV(outDir / "history_v.bin", std::ios::binary);
+	std::ofstream hP(outDir / "history_p.bin", std::ios::binary);
+	std::ofstream hT(outDir / "history_times.csv");
 	if (!hU || !hV || !hP || !hT) {
 		std::cerr << "Error: could not open history output files.\n";
 		return 1;
@@ -128,9 +134,9 @@ int main (int argc, char** argv)
 	hU.close(); hV.close(); hP.close(); hT.close();
 
 	//Generation of a .csv for the last snapshot
-	std::ofstream pressureNFile("pressure_final_" + std::to_string(Nx) + ".csv");
-	std::ofstream uNFile("u_final_" + std::to_string(Nx) + ".csv");
-	std::ofstream vNFile("v_final_" + std::to_string(Nx) + ".csv");
+	std::ofstream pressureNFile(outDir / ("pressure_final_" + std::to_string(Nx) + ".csv"));
+	std::ofstream uNFile(outDir / ("u_final_" + std::to_string(Nx) + ".csv"));
+	std::ofstream vNFile(outDir / ("v_final_" + std::to_string(Nx) + ".csv"));
 
 	if (!pressureNFile || !uNFile || !vNFile) {
 		std::cerr << "Error: could not open one or more final-field CSV files.\n";

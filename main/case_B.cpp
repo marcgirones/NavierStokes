@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 #include <cmath>
 #include <fstream>
 #include <cstdlib>     // atoi
@@ -17,6 +18,10 @@ int main (int argc, char** argv)
 {
 	const int Nx = (argc>1) ? std::atoi(argv[1]) : 100; //default value N = 100
 	const int Ny = Nx;
+	
+	//create the folder to store the result files
+	std::filesystem::create_directory("results/case_B_run");
+	
 
 	// Simulation parameters: N, final time, viscosity, time step
 	const double tFinal = (argc > 2) ? std::atof(argv[2]) : 0.01;
@@ -60,8 +65,8 @@ int main (int argc, char** argv)
 	/*******************************************************
 		PART B: PRESSURE-VELOCITY COUPLING AND TIME LOOP
 	*******************************************************/
-	std::ofstream file1("results/case_B_results/upFieldDivergence.csv");
-	std::ofstream file2("results/case_B_results/unFieldDivergence.csv");
+	std::ofstream file1("results/case_B_run/upFieldDivergence.csv");
+	std::ofstream file2("results/case_B_run/unFieldDivergence.csv");
 
 
 	Solver solver(Nx, Ny, Lx, Ly, nu, rho);

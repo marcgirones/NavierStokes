@@ -26,6 +26,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 
+ROOT = Path(__file__).resolve().parent.parent   # project root
+
 NU = 1.51e-5
 LX = 1.0
 
@@ -48,25 +50,21 @@ f_difV = sp.lambdify((x, y), dif_y, "numpy")
 # --------------------------------------------------------------- C++ runner --
 def run_case(exe: Path, n: int, workdir: Path) -> np.ndarray:
     """Run the solver for mesh size n and return the CSV as an (n*n, 4) array."""
-    workdir.mkdir(parents=True, exist_ok=True)
-    for stale in (workdir / f"datos{n}.csv", workdir / "datos.csv"):
-        stale.unlink(missing_ok=True)
+    out_dir = ROOT / "results" / "case_A_run" 
+    (out_dir / f"datos{n}.csv").unlink(missing_ok=True)
 
-    res = subprocess.run([str(exe.resolve()), str(n)], cwd=workdir,
+    res = subprocess.run([str(exe.resolve()), str(n)], cwd=ROOT,
                          capture_output=True, text=True)
     if res.returncode != 0:
         sys.exit(f"Solver failed for N={n}:\n{res.stderr}")
-
-    for name in (f"datos{n}.csv", "datos.csv"):
-        path = workdir / name
-        if path.exists():
-            data = np.genfromtxt(path, delimiter=",", skip_header=1)
-            if data.shape != (n * n, 4):
-                sys.exit(f"{path}: expected shape {(n * n, 4)}, got {data.shape}")
-            return data
-    sys.exit(f"No CSV found in {workdir} for N={n}")
-
-
+    path = out_dir / f"datos{n}.csv"
+    if not path.exists():
+        sys.exit(f"No CSV found in {out_dir} for N={n}")
+    data = np.genfromtxt(path, delimiter=",", skip_header=1)
+    if data.shape != (n * n, 4):
+        sys.exit(f"{path}: expected shape {(n * n, 4)}, got {data.shape}")
+    return data
+    
 # ------------------------------------------------------------------- errors --
 def errors_for(n: int, data: np.ndarray) -> list:
     h = LX / n
@@ -94,10 +92,11 @@ def main():
     ap.add_argument("--exe", default="../case_A", help="path to the compiled C++ binary")
     ap.add_argument("--sizes", type=int, nargs="+", default=[4, 8, 16, 32, 64, 128, 256, 512, 1024])
     ap.add_argument("--workdir", default="../results/c_d_validation", help="directory where the binary is run")
-    ap.add_argument("--out", default="../results/c_d_validation/c_d_convergence.png")
+    ap.add_argument("--out", default="../results/case_A_results/c_d_convergence.png")
     args = ap.parse_args()
 
     exe, workdir = Path(args.exe), Path(args.workdir)
+    Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     sizes = sorted(args.sizes)
     h = np.array([LX / n for n in sizes])
     err = np.zeros((len(sizes), 4))

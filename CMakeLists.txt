@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(NavierStokes LANGUAGES CXX)
 
+file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/results")
+
 # --- Estándar y tipo de build -------------------------------------------------
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

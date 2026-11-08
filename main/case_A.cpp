@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 #include <cmath>
 #include <fstream>
 #include <cstdlib>     // atoi
@@ -17,6 +18,8 @@ int main (int argc, char** argv)
 {
 	const int Nx = (argc>1) ? std::atoi(argv[1]) : 100; //default value N = 100
 	const int Ny = Nx;
+	//Create the folder to store the .csv files
+	std::filesystem::create_directory("results/case_A_run");
 
 	// Simulation parameters: N, final time, viscosity, time step
 	const double nu = (argc > 2) ? std::atof(argv[2]) : 1.51e-5;
@@ -59,7 +62,7 @@ int main (int argc, char** argv)
 	double convU=0, convV=0, difU=0, difV=0;
 
 	// Open CSV file for writing
-	std::ofstream file("datos" + std::to_string(Nx) + ".csv");
+	std::ofstream file("results/case_A_run/datos" + std::to_string(Nx) + ".csv");
 	if (!file) {
 		std::cerr << "Error: could not open Part A CSV output.\n";
 		return 1;
