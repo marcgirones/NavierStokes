@@ -89,6 +89,9 @@ void Mesh::print_field() const {
 double Mesh::getFieldValue (int i) const{
 	return m_field[i];
 }
+double Mesh::getFieldValue (int i, int j) const{
+	return m_field[i+m_Nx*j];
+}
 void Mesh::setFieldValue (int i, double val){
 	m_field[i] = val;
 }

@@ -63,11 +63,13 @@ Solver::~Solver()
 
 std::size_t Solver::index(int i, int j) const
 {
+    //Transforms the matrix index to flat index
     return static_cast<std::size_t>(j) * m_Nx + i;
 }
 
 void Solver::solvePoissonFFT()
 {
+    //Solve the poisson problem and fills the m_pseudoPressure vector with the solution 
     auto* rhs = static_cast<fftw_complex*>(m_rhs);
     auto* rhsHat = static_cast<fftw_complex*>(m_rhsHat);
 

@@ -65,21 +65,6 @@ int main (int argc, char** argv)
 	********************************************************/
 	double convU=0, convV=0, difU=0, difV=0;
 
-
-
-	/*for (int i=0; i<Nx; i++)
-	{
-		for (int j=0; j<Ny; j++)
-		{
-			// Compute convective and diffusive terms
-			convU = FVM::computeConvectiveU(i, j, u, v);
-			difU = FVM::computeDiffusiveU(i, j, u, nu);
-
-			convV = FVM::computeConvectiveV(i, j, u, v);
-			difV = FVM::computeDiffusiveV(i, j, u, v, nu);
-
-		}
-	}*/
 	for (int i=0; i<Nx*Ny; i++)
 	{
 		// Compute convective and diffusive terms
@@ -112,57 +97,46 @@ int main (int argc, char** argv)
 		return 1;
 	}
 	hT << std::setprecision(17) << "step,t,dt\n";
+	
+	int end =0;
+	
+	//generation of the binary files to store all transitions
 
-	std::vector<double> buf(static_cast<std::size_t>(Nx) * Ny);
-	auto dump = [&](std::ofstream& f, const Mesh& m) {
-		for (int j = 0; j < Ny; ++j)
-			for (int i = 0; i < Nx; ++i)
-				buf[static_cast<std::size_t>(j) * Nx + i] = m(i, j);
-		f.write(reinterpret_cast<const char*>(buf.data()),
-		        static_cast<std::streamsize>(buf.size() * sizeof(double)));
-	};
-	auto saveSnapshot = [&]() {
-		dump(hU, u); dump(hV, v); dump(hP, p);
-		hT << solver.getStep() << "," << solver.getTime() << ","
-		   << solver.getdt() << "\n";
-	};
-
-	saveSnapshot();   // initial state, t = 0
-
-	while (solver.getTime() < tFinal) {
-
-		const double dtMax = tFinal - solver.getTime();
-		solver.step(u, v, p, dtMax);
-
-		std::cout << "Completed step " << solver.getStep()
-				<< ", dt = " << solver.getdt()
-				<< ", t = " << solver.getTime() << "\n";
-
-		if (solver.getStep() % saveEvery == 0 || solver.getTime() >= tFinal)
-			saveSnapshot();
+	while (!end) {
+ 
+		if (solver.getStep() % saveEvery == 0 || solver.getTime() >= tFinal) {
+			for (int k = 0; k < Nx*Ny; k++) {
+				const double uk = u.getFieldValue(k);
+				const double vk = v.getFieldValue(k);
+				const double pk = p.getFieldValue(k);
+				hU.write(reinterpret_cast<const char*>(&uk), sizeof(double));
+				hV.write(reinterpret_cast<const char*>(&vk), sizeof(double));
+				hP.write(reinterpret_cast<const char*>(&pk), sizeof(double));
+			}
+			hT << solver.getStep() << "," << solver.getTime() << ","<< solver.getdt() << "\n";
+		}
+ 
+		if (solver.getTime() >= tFinal) end=1;
+ 		else{
+			const double dtMax = tFinal - solver.getTime();
+			solver.step(u, v, p, dtMax);
+ 
+			std::cout << "Completed step " << solver.getStep()<< ", dt = " << solver.getdt()<< ", t = " << solver.getTime() << "\n";
+		}
 	}
+
 	hU.close(); hV.close(); hP.close(); hT.close();
 
-	// Final fields for inspection / verification.
-	std::ofstream pressureFile("pressure_final.csv");
-	std::ofstream uFile("u_final.csv");
-	std::ofstream vFile("v_final.csv");
-
-	// Additional N-specific files prevent results from different meshes
-	// overwriting each other during a convergence study.
+	//Generation of a .csv for the last snapshot
 	std::ofstream pressureNFile("pressure_final_" + std::to_string(Nx) + ".csv");
 	std::ofstream uNFile("u_final_" + std::to_string(Nx) + ".csv");
 	std::ofstream vNFile("v_final_" + std::to_string(Nx) + ".csv");
 
-	if (!pressureFile || !uFile || !vFile ||
-	    !pressureNFile || !uNFile || !vNFile) {
+	if (!pressureNFile || !uNFile || !vNFile) {
 		std::cerr << "Error: could not open one or more final-field CSV files.\n";
 		return 1;
 	}
 
-	pressureFile << std::setprecision(17);
-	uFile << std::setprecision(17);
-	vFile << std::setprecision(17);
 	pressureNFile << std::setprecision(17);
 	uNFile << std::setprecision(17);
 	vNFile << std::setprecision(17);
@@ -170,24 +144,15 @@ int main (int argc, char** argv)
 	for (int j = 0; j < Ny; ++j) {
 		for (int i = 0; i < Nx; ++i) {
 			if (i) {
-				pressureFile << ","; uFile << ","; vFile << ",";
 				pressureNFile << ","; uNFile << ","; vNFile << ",";
 			}
-			pressureFile << p(i,j);
-			uFile << u(i,j);
-			vFile << v(i,j);
-
-			pressureNFile << p(i,j);
-			uNFile << u(i,j);
-			vNFile << v(i,j);
+			pressureNFile << p.getFieldValue(i,j);
+			uNFile << u.getFieldValue(i,j);
+			vNFile << v.getFieldValue(i,j);
 		}
-		pressureFile << "\n"; uFile << "\n"; vFile << "\n";
 		pressureNFile << "\n"; uNFile << "\n"; vNFile << "\n";
 	}
 
-	pressureFile.close();
-	uFile.close();
-	vFile.close();
 	pressureNFile.close();
 	uNFile.close();
 	vNFile.close();
